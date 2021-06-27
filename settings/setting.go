@@ -26,6 +26,8 @@ type App struct {
 	Runport      string `mapstructure:"runport"`
 	Runhost      string `mapstructure:"runhost"`
 	Shutdownwait int    `mapstructure:"shutdownwait"`
+	Idstarttime  string `mapstructure:"idstarttime"`
+	Machineid    int    `mapstructure:"machineid"`
 }
 type Mysql struct {
 	Host              string `mapstructure:"host"`

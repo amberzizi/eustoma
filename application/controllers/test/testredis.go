@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"github.com/gohouse/gorose"
-	myginuser2 "mygin/application/models"
+	models "mygin/application/models"
 	mysql2 "mygin/dao/mysql"
 	redis3 "mygin/dao/redis"
 	"net/http"
@@ -68,7 +68,7 @@ func queryMultiRowDemo(db *sql.DB) {
 
 	// 循环读取结果集中的数据
 	for rows.Next() {
-		var u myginuser2.User
+		var u models.User
 		err := rows.Scan(&u.Id, &u.Name, &u.Age)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
@@ -80,8 +80,8 @@ func queryMultiRowDemo(db *sql.DB) {
 
 func queryGoroseMultiRowDemo(connection *gorose.Connection) {
 	db := connection.NewSession()
-	var user myginuser2.User
-	var users []myginuser2.User
+	var user models.User
+	var users []models.User
 	err2 := db.Table(&user).Select()
 	err2 = db.Table(&users).Limit(10).Select()
 	if err2 != nil {

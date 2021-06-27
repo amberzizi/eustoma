@@ -2,7 +2,7 @@
 // @Description  zap日志创建，tools.CreateQrcode() 创建二维码
 // @Author  amberhu  20210625
 // @Update
-package tools
+package qrcode
 
 import (
 	"github.com/boombuler/barcode"

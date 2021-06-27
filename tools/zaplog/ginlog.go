@@ -2,7 +2,7 @@
 // @Description  zap日志创建，tools.LogerProducter()获取 logger 和 sugarlogger日志对象
 // @Author  amberhu  20210625
 // @Update
-package tools
+package zaplog
 
 import (
 	"fmt"

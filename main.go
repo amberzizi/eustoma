@@ -8,7 +8,7 @@ import (
 	redis2 "mygin/dao/redis"
 	routers2 "mygin/routers"
 	settings2 "mygin/settings"
-	"mygin/tools"
+	"mygin/tools/zaplog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -24,7 +24,7 @@ func main() {
 	//go settings.FreashSetting()
 
 	//3.加载zaplog
-	tools.InitLogger(settings2.SettingGlb.Log)
+	zaplog.InitLogger(settings2.SettingGlb.Log)
 	//注册 将日志从缓冲区同步给文件
 	defer zap.L().Sync()
 	zap.L().Debug("logger init success...in main ")

@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/boombuler/barcode v1.0.1
+	github.com/bwmarrin/snowflake v0.3.0 // indirect                    ===雪花ID算法===
 	github.com/fsnotify/fsnotify v1.4.9 // indirect 					===文件变化监视===
 	github.com/gin-gonic/gin v1.7.2 //									===gin框架===
 	github.com/go-redis/redis v6.15.9+incompatible // indirect 			===redis连接库===
