@@ -28,8 +28,9 @@ func SetupRouter() *gin.Engine {
 
 	v1 := r.Group("/v1")
 	{
-		v1.GET("createuser",user.Createuid) //测试生成雪花id
-
+		v1.GET("createuser", user.Createuid) //测试生成雪花id
+		v1.GET("pw", user.Randpasswd)        //测试密码盐
+		v1.POST("signup", user.SignUpHandler)
 	}
 
 	//r.GET("/hello", helloHandler)

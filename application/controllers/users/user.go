@@ -6,26 +6,74 @@ import (
 	"github.com/go-redis/redis"
 	"go.uber.org/zap"
 	"math/rand"
-	redis3 "mygin/dao/redis"
+	"mygin/application/logic"
+	"mygin/application/models"
+	redis3 "mygin/dao/daoredis"
 	"mygin/settings"
+	"mygin/tools/encryption"
 	"mygin/tools/qrcode"
+	"mygin/tools/randstring"
 	"mygin/tools/snowflake"
 	"net/http"
 	"strconv"
 	"time"
 )
 
+/**
+* param json
+*
+*
+**/
+func SignUpHandler(c *gin.Context) {
+	//参数校验
+	//var p models.ParamSignUp
+	p := new(models.ParamSignUp)
+	if err := c.ShouldBindJSON(&p); err != nil {
+		//请求参数有误 返回响应  日志记录错误
+		zap.L().Error("SignUp with invalid param", zap.Error(err))
+		c.JSON(http.StatusOK, gin.H{
+			"code": "1002",
+			"msg":  settings.CodeSetting[1002],
+		})
+		return
+	}
+	//业务规则校验
+	//密码验证检查
+	//if p.Password != p.RePassword {
+	//	//请求参数有误 返回响应  日志记录错误
+	//	zap.L().Error("SignUp with invalid param")
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code": "1003",
+	//		"msg":  settings.CodeSetting[1003],
+	//	})
+	//	return
+	//}
+	//注册逻辑
+	err := logic.SignUp(p)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": "1001",
+		"msg":  settings.CodeSetting[1001],
+	})
+}
+
 func Createuid(c *gin.Context) {
 	if err := snowflake.Init(settings.SettingGlb.App.Idstarttime, int64(settings.SettingGlb.App.Machineid)); err != nil {
 		fmt.Printf("snowflake init failed,err:%v\n", err)
 	} else {
-		zap.L().Info("genid" + strconv.FormatInt(snowflake.GenId(),10))
+		zap.L().Info("genid" + strconv.FormatInt(snowflake.GenId(), 10))
 		println(snowflake.GenId())
-
-
-
 	}
 
+}
+
+func Randpasswd(c *gin.Context) {
+	randw := randstring.RandSeq(10)
+	randwm := encryption.Md5(randw)
+	println(randwm)
 }
 
 func Sendinfo(c *gin.Context) {

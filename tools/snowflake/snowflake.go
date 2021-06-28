@@ -1,3 +1,7 @@
+// @Title  snowflake.go
+// @Description  雪花算法id
+// @Author  amberhu  20210624
+// @Update
 package snowflake
 
 import (
@@ -18,7 +22,7 @@ func Init(startTime string, machineID int64) (err error) {
 	return err
 }
 
-func GetNode() *snowflake.Node{
+func GetNode() *snowflake.Node {
 	return node
 }
 func GenId() int64 {

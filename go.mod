@@ -8,7 +8,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect 					===文件变化监视===
 	github.com/gin-gonic/gin v1.7.2 //									===gin框架===
 	github.com/go-redis/redis v6.15.9+incompatible // indirect 			===redis连接库===
-	github.com/go-sql-driver/mysql v1.6.0 //mysql 						===驱动===
+	github.com/go-sql-driver/mysql v1.6.0 //daomysql 						===驱动===
 	github.com/gohouse/converter v0.0.3 // indirect
 	github.com/gohouse/gorose v1.0.5 // indirect  						===dborm取代自有"database/sql"===
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect  	===日志文件切割===

@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql" //init
 	"gopkg.in/gcfg.v1"
-	"mygin/application/models"
 	"net/http"
 )
 
@@ -40,7 +39,7 @@ func returnMysqlSetting() *mysqlsetting {
 }
 func ReturnMsqlDb() *sql.DB {
 	mysql := returnMysqlSetting()
-	// init mysql db
+	// init daomysql db
 	if err := initMySQL(mysql); err != nil {
 		fmt.Printf("try connecting fail,err:%v\n", err)
 	}
@@ -50,12 +49,12 @@ func ReturnMsqlDb() *sql.DB {
 // @title    initMySQL
 // @description   初始化数据库连接函数
 // @auth      amberhu         20210624 15:35
-// @param     mysql           mysqlsetting     mysql设置参数
+// @param     daomysql           mysqlsetting     mysql设置参数
 // @return    none-db            sql.DB          为全局参数赋值
 // @return    err               error           报错
 func initMySQL(mysql *mysqlsetting) (err error) {
 	dsn := mysql.Mysql.Username + ":" + mysql.Mysql.Password + "@tcp(" + mysql.Mysql.Host + ":" + mysql.Mysql.Port + ")/" + mysql.Mysql.Dbname
-	db, err = sql.Open("mysql", dsn)
+	db, err = sql.Open("daomysql", dsn)
 	if err != nil {
 		panic(err)
 	}
@@ -76,16 +75,13 @@ func initMySQL(mysql *mysqlsetting) (err error) {
 // @param
 // @return    err               error           报错
 func Sendinfo(c *gin.Context) {
-	//	init mysql setting
+	//	init daomysql setting
 	mysql := returnMysqlSetting()
 
-	// init mysql db
+	// init daomysql db
 	if err := initMySQL(mysql); err != nil {
 		fmt.Printf("try connecting fail,err:%v\n", err)
 	}
-	// test query
-	//queryRowDemo()
-	queryMulRowDemo()
 
 	//final db close
 	defer db.Close()
@@ -93,41 +89,4 @@ func Sendinfo(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello sendinfoagent!",
 	})
-}
-
-// @title    queryRowDemo
-// @description   单行搜索测试
-// @auth      amberhu         20210624 15:35
-// @return    err               error           报错
-func queryRowDemo() {
-
-	sqlStr := "select id,name,age from user where id=?"
-	var u myginuser.User
-	err := db.QueryRow(sqlStr, 1).Scan(&u.Id, &u.Name, &u.Age)
-	if err != nil {
-		fmt.Printf("scan failed err:%v\n", err)
-		return
-	}
-	fmt.Printf("id:%d name:%s age:%d\n", u.Id, u.Name, u.Age)
-}
-
-func queryMulRowDemo() {
-	sqlStr := "select * from user"
-	rows, err := db.Query(sqlStr)
-	if err != nil {
-		fmt.Printf("query faild,err:%v\n", err)
-		return
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var u myginuser.User
-		err := rows.Scan(&u.Id, &u.Name, &u.Age)
-		if err != nil {
-			fmt.Printf("scan faild,err:%v\n", err)
-			return
-		}
-		fmt.Printf("id:%d name:%s age:%d\n", u.Id, u.Name, u.Age)
-	}
 }

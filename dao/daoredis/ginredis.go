@@ -6,17 +6,17 @@
 //测试redis
 //rdb := tools.ReturnRedisDb()
 //defer rdb.Close()   回收*****
-package redis
+package daoredis
 
 import (
 	"fmt"
 	"github.com/go-redis/redis"
-	settings2 "mygin/settings"
+	"mygin/settings"
 )
 
 var rdb *redis.Client
 
-//var Rdb *redis.Client
+//var Rdb *daoredis.Client
 
 //对外返回redis连接对象
 //可以直接用redis.Rdb
@@ -25,7 +25,7 @@ func ReturnRedisDb() *redis.Client {
 }
 
 //初始化redis 连接
-func initRedisClient(redisset *settings2.Redis) (err error) {
+func initRedisClient(redisset *settings.Redis) (err error) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     redisset.Host,
 		Password: redisset.Password,
@@ -38,13 +38,13 @@ func initRedisClient(redisset *settings2.Redis) (err error) {
 }
 
 //main里面用的初始化参数文件 初始化连接
-func ReidsInitConnectParamInMain(redisset *settings2.Redis) string {
+func ReidsInitConnectParamInMain(redisset *settings.Redis) string {
 	err := initRedisClient(redisset)
 	if err != nil {
-		fmt.Printf("redis try connecting fail,err:%v\n", err)
-		return "redis try connecting fail,err"
+		fmt.Printf("daoredis try connecting fail,err:%v\n", err)
+		return "daoredis try connecting fail,err"
 	} else {
-		return "redis try connecting success"
+		return "daoredis try connecting success"
 	}
 }
 
