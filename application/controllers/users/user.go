@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	"go.uber.org/zap"
 	"math/rand"
 	redis3 "mygin/dao/redis"
 	"mygin/settings"
@@ -18,11 +19,11 @@ func Createuid(c *gin.Context) {
 	if err := snowflake.Init(settings.SettingGlb.App.Idstarttime, int64(settings.SettingGlb.App.Machineid)); err != nil {
 		fmt.Printf("snowflake init failed,err:%v\n", err)
 	} else {
-		//zap.L().Info("genid" + strconv.Itoa(int(snowflake.GenId())))
-		println(settings.SettingGlb.Idstarttime)
-		println(int64(settings.SettingGlb.Machineid))
-
+		zap.L().Info("genid" + strconv.FormatInt(snowflake.GenId(),10))
 		println(snowflake.GenId())
+
+
+
 	}
 
 }
