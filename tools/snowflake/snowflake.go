@@ -6,6 +6,7 @@ package snowflake
 
 import (
 	"github.com/bwmarrin/snowflake"
+	"mygin/settings"
 	"time"
 )
 
@@ -22,9 +23,7 @@ func Init(startTime string, machineID int64) (err error) {
 	return err
 }
 
-func GetNode() *snowflake.Node {
-	return node
-}
-func GenId() int64 {
-	return node.Generate().Int64()
+func GenId() (int64,error) {
+	err := Init(settings.SettingGlb.Idstarttime,int64(settings.SettingGlb.Machineid))
+	return node.Generate().Int64(),err
 }

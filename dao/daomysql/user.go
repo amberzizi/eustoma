@@ -1,8 +1,9 @@
 package daomysql
 
+
 //插重
 func GetUserInfoByUsername(username string) (bool, error) {
-	connection := ReturnMsqlGoroseConnection()
+	var connection = ReturnMsqlGoroseConnection()
 	db := connection.NewSession()
 	//var user models.User
 	count, err := db.Table("user").Where("username", username).Count("*")
@@ -16,6 +17,9 @@ func GetUserInfoByUsername(username string) (bool, error) {
 }
 
 //插入用户信息
-func InsertUser() {
-
+func InsertUser( user map[string]interface{}) (err error) {
+	var connection = ReturnMsqlGoroseConnection()
+	db := connection.NewSession()
+	_ , err = db.Table("user").Data(user).Insert()
+	return err
 }

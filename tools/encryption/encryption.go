@@ -10,9 +10,9 @@ import (
 	"io"
 )
 
-func Md5(n string) string {
+func Md5(n string) (string,error) {
 	w := md5.New()
-	io.WriteString(w, n)
+	_,err:=io.WriteString(w, n)
 	md5str := fmt.Sprintf("%x", w.Sum(nil))
-	return md5str
+	return md5str ,err
 }
