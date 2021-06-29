@@ -9,7 +9,8 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	settings2 "mygin/settings"
+	"mygin/settings"
+	"os"
 	"time"
 )
 
@@ -26,21 +27,26 @@ var sugarlogger *zap.SugaredLogger
 //}
 
 //初始化日志
-func InitLogger(logsetting *settings2.Log) {
-	//用已有日志格式
-	//logger, _ = zap.NewProduction()
-	//sugarlogger = logger.Sugar()
-	//自定义日志格式core
-
-	//core := zapcore.NewCore(getEncoder(), getLogWrite(),zapcore.InfoLevel)
-	//logsetting := settings.GetSetting() //配置文件
+func InitLogger(logsetting *settings.Log, mode string) {
 	var l = new(zapcore.Level)
 	err := l.UnmarshalText([]byte(logsetting.Level))
 	if err != nil {
 		return
 	}
-	core := zapcore.NewCore(getEncoder(), getLogWrite(settings2.GetSetting().Log.Maxsize,
-		settings2.GetSetting().Log.Maxbackups, settings2.GetSetting().Log.Maxage, false), l)
+	var core zapcore.Core
+	if mode == "dev" {
+		//开发模式  日志输出到终端
+		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+		core = zapcore.NewTee(
+			//dev开发模式  定义多个日志输出 又记录到文件  又在终端输出
+			zapcore.NewCore(getEncoder(), getLogWrite(settings.GetSetting().Log.Maxsize,
+				settings.GetSetting().Log.Maxbackups, settings.GetSetting().Log.Maxage, false), l),
+			zapcore.NewCore(consoleEncoder, zapcore.Lock(os.Stdout), zapcore.DebugLevel),
+		)
+	} else {
+		core = zapcore.NewCore(getEncoder(), getLogWrite(settings.GetSetting().Log.Maxsize,
+			settings.GetSetting().Log.Maxbackups, settings.GetSetting().Log.Maxage, false), l)
+	}
 	//zap.AddCaller()增加函数调用信息
 	logger = zap.New(core, zap.AddCaller())
 	//sugarlogger = logger.Sugar()
@@ -85,14 +91,5 @@ func getEncoder() zapcore.Encoder {
 }
 
 func Printetest() {
-	println(settings2.GetSetting().Redis.Host)
-}
-
-//关闭公有
-//外部获取日志使用参数入口
-//可废弃 都使用zap.L()的方式获取
-func logerProducter() (*zap.Logger, *zap.SugaredLogger) {
-	logsetting := settings2.GetSetting()
-	InitLogger(logsetting.Log)
-	return logger, sugarlogger
+	println(settings.GetSetting().Redis.Host)
 }

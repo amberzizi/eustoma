@@ -21,14 +21,21 @@ func helloHandler(c *gin.Context) {
 }
 
 // SetupRouter 配置路由信息
-func SetupRouter() *gin.Engine {
+func SetupRouter(mode string) *gin.Engine {
 	//r := gin.Default()
+	if mode == gin.ReleaseMode {
+		//如果当前模式是发布模式  gin也是
+		gin.SetMode(gin.ReleaseMode)
+	}
 	r := gin.New()
 	r.Use(GinLogger(zap.L()), GinRecovery(zap.L(), true))
 
 	v1 := r.Group("/v1")
 	{
-		v1.POST("signup", user.SignUpHandler)//用户注册
+		v1.POST("/signup", user.SignUpHandler) //用户注册
+		v1.POST("/signin", user.SignInHandler) //用户登录
+
+		v1.POST("/getuserinfo", user.GetUserInfer) //用户获取用户信息
 	}
 
 	//r.GET("/hello", helloHandler)

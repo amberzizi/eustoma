@@ -24,7 +24,7 @@ func main() {
 	//go settings.FreashSetting()
 
 	//3.加载zaplog
-	zaplog.InitLogger(settings.SettingGlb.Log)
+	zaplog.InitLogger(settings.SettingGlb.Log, settings.SettingGlb.App.Mode)
 	//注册 将日志从缓冲区同步给文件
 	defer zap.L().Sync()
 	zap.L().Debug("logger init success...in main ")
@@ -40,7 +40,7 @@ func main() {
 	defer daomysql.Gclose()
 
 	//6.载入路由
-	r := routers.SetupRouter()
+	r := routers.SetupRouter(settings.SettingGlb.App.Mode)
 
 	//7.协程开机监听端口
 	//优雅重启  和 supervisor不可兼得 supervisor会自动拉起监控中的关机进程

@@ -17,9 +17,7 @@ import (
 )
 
 /**
-* param json
-*
-*
+*用户注册
 **/
 func SignUpHandler(c *gin.Context) {
 	//参数校验
@@ -52,6 +50,37 @@ func SignUpHandler(c *gin.Context) {
 	})
 }
 
+/**
+*用户登录
+ */
+func SignInHandler(c *gin.Context) {
+
+}
+
+//根据userid 获取用户信息
+func GetUserInfer(c *gin.Context) {
+	p := new(models.ParamGetuserinfoByUID)
+	if err := c.ShouldBindJSON(&p); err != nil {
+		//请求参数有误 返回响应  日志记录错误
+		zap.L().Error("get userinfo by user_id", zap.Error(err))
+		c.JSON(http.StatusOK, gin.H{
+			"code": "1002",
+			"msg":  settings.CodeSetting[1002],
+		})
+		return
+	}
+
+	userinfo, err := logic.GetUserInfoByUserId(p)
+	if err != nil {
+		zap.L().Error("get userinfo by user_id dao failed", zap.Error(err))
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": "1001",
+		"msg":  settings.CodeSetting[1001],
+		"data": userinfo,
+	})
+}
 
 func Sendinfo(c *gin.Context) {
 

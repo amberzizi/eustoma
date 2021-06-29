@@ -25,20 +25,27 @@ func SignUp(p *models.ParamSignUp) (err error) {
 	}
 
 	//生成uid
-	userID , err := snowflake.GenId()
+	userID, err := snowflake.GenId()
 	//盐
 	salt := randstring.RandSeq(10)
 	//加盐后密码
-	finalpw , err := encryption.Md5(p.Password + salt)
+	finalpw, err := encryption.Md5(p.Password + salt)
 
 	//return errors.New("用户已存在")
 	userinfo := map[string]interface{}{
-		"user_id":userID,
-		"username":p.Username,
-		"password":finalpw,
-		"salt":salt,
-		"email":p.Email}
+		"user_id":  userID,
+		"username": p.Username,
+		"password": finalpw,
+		"salt":     salt,
+		"email":    p.Email}
 	err = daomysql.InsertUser(userinfo)
 
 	return err
+}
+
+//获取用户信息 by userid
+func GetUserInfoByUserId(p *models.ParamGetuserinfoByUID) (*models.Userinfopublic, error) {
+	userinfo, err := daomysql.GetUserInfoByUserId(p.User_id)
+	return userinfo, err
+
 }

@@ -8,3 +8,14 @@ type ParamSignUp struct {
 	Email      string `json:"email" binding:"required,email"`
 	Age        int    `json:"age" binding:"gte=1,lte=130"`
 }
+
+//用户登录传入参数模型
+type ParamSignIn struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+//查询
+type ParamGetuserinfoByUID struct {
+	User_id int `json:"user_id" binding:"required"`
+}

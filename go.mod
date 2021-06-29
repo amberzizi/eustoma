@@ -11,6 +11,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0 //daomysql 						===驱动===
 	github.com/gohouse/converter v0.0.3 // indirect
 	github.com/gohouse/gorose v1.0.5 // indirect  						===dborm取代自有"database/sql"===
+	github.com/mojocn/base64Captcha v1.3.4 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect  	===日志文件切割===
 	github.com/onsi/ginkgo v1.16.4 // indirect
 	github.com/onsi/gomega v1.13.0 // indirect
