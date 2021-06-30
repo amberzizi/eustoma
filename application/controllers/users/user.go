@@ -140,6 +140,7 @@ func LoginInHandler(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "1005",
 			"msg":  settings.CodeSetting[1005],
+			"data": err.Error(),
 		})
 		return
 	}

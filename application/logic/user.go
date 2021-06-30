@@ -2,6 +2,7 @@
 package logic
 
 import (
+	"database/sql"
 	"errors"
 	"mygin/application/models"
 	"mygin/dao/daomysql"
@@ -53,6 +54,9 @@ func GetUserInfoByUserId(p *models.ParamGetuserinfoByUID) (*models.Userinfopubli
 //用户登录 校验密码
 func LoginCheckPassword(p *models.ParamLoginIn) (bool, error) {
 	userinfo, err := daomysql.GetUserInfoByUsernameForLogin(p.Username)
+	if err == sql.ErrNoRows {
+		return false, errors.New("用户名不存在")
+	}
 	if err != nil {
 		return false, err
 	}
