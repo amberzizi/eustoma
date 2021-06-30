@@ -1,79 +1,92 @@
 package gincaptcha
 
 import (
-	"encoding/json"
-	"github.com/mojocn/base64Captcha"
-	"log"
+	"bytes"
+	"errors"
+	"fmt"
+	"github.com/dchest/captcha"
+	"github.com/gin-gonic/gin"
 	"net/http"
+	"path"
+	"strings"
+	"time"
 )
 
-//configJsonBody json request body.
-type configJsonBody struct {
-	Id            string
-	CaptchaType   string
-	VerifyValue   string
-	DriverAudio   *base64Captcha.DriverAudio
-	DriverString  *base64Captcha.DriverString
-	DriverChinese *base64Captcha.DriverChinese
-	DriverMath    *base64Captcha.DriverMath
-	DriverDigit   *base64Captcha.DriverDigit
+type CaptchaResponse struct {
+	CaptchaId string `json:"captchaId"` //验证码Id
+	ImageUrl  string `json:"imageUrl"`  //验证码图片url
 }
 
-var store = base64Captcha.DefaultMemStore
+//生成验证码
+func GenCaptcha() *CaptchaResponse {
+	length := captcha.DefaultLen
+	captchaId := captcha.NewLen(length)
+	var captcha CaptchaResponse
+	captcha.CaptchaId = captchaId
+	captcha.ImageUrl = "/captcha/" + captchaId + ".png"
+	return &captcha
+}
 
-// base64Captcha create http handler
-func generateCaptchaHandler(w http.ResponseWriter, r *http.Request) {
-	//parse request parameters
-	decoder := json.NewDecoder(r.Body)
-	var param configJsonBody
-	err := decoder.Decode(&param)
-	if err != nil {
-		log.Println(err)
+//获取验证码
+func GetCapid(captchaId string, c *gin.Context) {
+	fmt.Println("GetCaptchaPng : " + captchaId)
+	ServeHTTP(c.Writer, c.Request)
+}
+
+//验证
+func VerifyCaptcha(capid string, inputid string) (bool, error) {
+	if capid == "" || inputid == "" {
+		return false, errors.New("验证参数缺失")
 	}
-	defer r.Body.Close()
-	var driver base64Captcha.Driver
+	if captcha.VerifyString(capid, inputid) {
+		return true, nil
+	} else {
+		return false, nil
+	}
+}
 
-	//create base64 encoding captcha
-	switch param.CaptchaType {
-	case "audio":
-		driver = param.DriverAudio
-	case "string":
-		driver = param.DriverString.ConvertFonts()
-	case "math":
-		driver = param.DriverMath.ConvertFonts()
-	case "chinese":
-		driver = param.DriverChinese.ConvertFonts()
+func ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	dir, file := path.Split(r.URL.Path)
+	ext := path.Ext(file)
+	id := file[:len(file)-len(ext)]
+	fmt.Println("file : " + file)
+	fmt.Println("ext : " + ext)
+	fmt.Println("id : " + id)
+	if ext == "" || id == "" {
+		http.NotFound(w, r)
+		return
+	}
+	fmt.Println("reload : " + r.FormValue("reload"))
+	if r.FormValue("reload") != "" {
+		captcha.Reload(id)
+	}
+	lang := strings.ToLower(r.FormValue("lang"))
+	download := path.Base(dir) == "download"
+	if Serve(w, r, id, ext, lang, download, captcha.StdWidth, captcha.StdHeight) == captcha.ErrNotFound {
+		http.NotFound(w, r)
+	}
+}
+
+func Serve(w http.ResponseWriter, r *http.Request, id, ext, lang string, download bool, width, height int) error {
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+
+	var content bytes.Buffer
+	switch ext {
+	case ".png":
+		w.Header().Set("Content-Type", "image/png")
+		captcha.WriteImage(&content, id, width, height)
+	case ".wav":
+		w.Header().Set("Content-Type", "audio/x-wav")
+		captcha.WriteAudio(&content, id, lang)
 	default:
-		driver = param.DriverDigit
+		return captcha.ErrNotFound
 	}
-	c := base64Captcha.NewCaptcha(driver, store)
-	id, b64s, err := c.Generate()
-	body := map[string]interface{}{"code": 1, "data": b64s, "captchaId": id, "msg": "success"}
-	if err != nil {
-		body = map[string]interface{}{"code": 0, "msg": err.Error()}
-	}
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	json.NewEncoder(w).Encode(body)
-}
 
-// base64Captcha verify http handler
-func captchaVerifyHandle(w http.ResponseWriter, r *http.Request) {
-
-	//parse request json body
-	decoder := json.NewDecoder(r.Body)
-	var param configJsonBody
-	err := decoder.Decode(&param)
-	if err != nil {
-		log.Println(err)
+	if download {
+		w.Header().Set("Content-Type", "application/octet-stream")
 	}
-	defer r.Body.Close()
-	//verify the captcha
-	body := map[string]interface{}{"code": 0, "msg": "failed"}
-	if store.Verify(param.Id, param.VerifyValue, true) {
-		body = map[string]interface{}{"code": 1, "msg": "ok"}
-	}
-	//set json response
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-
-	json.NewEncoder(w).Encode(body)
+	http.ServeContent(w, r, id+ext, time.Time{}, bytes.NewReader(content.Bytes()))
+	return nil
 }

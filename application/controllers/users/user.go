@@ -10,6 +10,7 @@ import (
 	"mygin/application/models"
 	"mygin/dao/daoredis"
 	"mygin/settings"
+	"mygin/tools/gincaptcha"
 	"mygin/tools/qrcode"
 	"net/http"
 	"strconv"
@@ -50,13 +51,6 @@ func SignUpHandler(c *gin.Context) {
 	})
 }
 
-/**
-*用户登录
- */
-func SignInHandler(c *gin.Context) {
-
-}
-
 //根据userid 获取用户信息
 func GetUserInfer(c *gin.Context) {
 	p := new(models.ParamGetuserinfoByUID)
@@ -80,6 +74,88 @@ func GetUserInfer(c *gin.Context) {
 		"msg":  settings.CodeSetting[1001],
 		"data": userinfo,
 	})
+}
+
+//生成验证码
+func Captcha(c *gin.Context) {
+	cap := gincaptcha.GenCaptcha()
+	c.JSON(http.StatusOK, gin.H{
+		"code": "1001",
+		"msg":  settings.CodeSetting[1001],
+		"data": cap,
+	})
+}
+
+//获取验证码图
+func GetCaptcha(c *gin.Context) {
+	captchaId := c.Param("captchaId")
+	gincaptcha.GetCapid(captchaId, c)
+}
+
+//校验验证码
+func Verify(c *gin.Context) {
+	captchaId := c.Param("captchaId")
+	value := c.Param("value")
+	result, err := gincaptcha.VerifyCaptcha(captchaId, value)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "1002",
+			"msg":  settings.CodeSetting[1002],
+			"data": [1]string{},
+		})
+		return
+	}
+	if result {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "1001",
+			"msg":  settings.CodeSetting[1001],
+			"data": [1]string{},
+		})
+	}
+}
+
+/**
+*用户登录
+完成验证码校验
+完成密码校验
+*/
+func LoginInHandler(c *gin.Context) {
+	//参数校验
+	//var p models.ParamSignUp
+	p := new(models.ParamLoginIn)
+	if err := c.ShouldBindJSON(&p); err != nil {
+		//请求参数有误 返回响应  日志记录错误
+		zap.L().Error("LoginIn with invalid param", zap.Error(err))
+		c.JSON(http.StatusOK, gin.H{
+			"code": "1002",
+			"msg":  settings.CodeSetting[1002],
+		})
+		return
+	}
+
+	//校验参数
+	result, err := logic.LoginCheckPassword(p)
+	if err != nil {
+		zap.L().Error("LoginIn with check password faild", zap.Error(err))
+		c.JSON(http.StatusOK, gin.H{
+			"code": "1005",
+			"msg":  settings.CodeSetting[1005],
+		})
+		return
+	}
+
+	if !result {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "1006",
+			"msg":  settings.CodeSetting[1006],
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "1001",
+			"msg":  settings.CodeSetting[1001],
+		})
+	}
+
 }
 
 func Sendinfo(c *gin.Context) {

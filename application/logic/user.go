@@ -49,3 +49,19 @@ func GetUserInfoByUserId(p *models.ParamGetuserinfoByUID) (*models.Userinfopubli
 	return userinfo, err
 
 }
+
+//用户登录 校验密码
+func LoginCheckPassword(p *models.ParamLoginIn) (bool, error) {
+	userinfo, err := daomysql.GetUserInfoByUsernameForLogin(p.Username)
+	if err != nil {
+		return false, err
+	}
+	aftermd5pw, err := encryption.Md5(p.Password + userinfo.Salt)
+	if err != nil {
+		return false, err
+	}
+	if aftermd5pw == userinfo.Password {
+		return true, nil
+	}
+	return false, nil
+}

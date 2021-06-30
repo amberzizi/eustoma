@@ -10,7 +10,7 @@ type ParamSignUp struct {
 }
 
 //用户登录传入参数模型
-type ParamSignIn struct {
+type ParamLoginIn struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
