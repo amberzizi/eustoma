@@ -11,6 +11,13 @@ import (
 	"mygin/tools/snowflake"
 )
 
+//定义自定义error
+var (
+	ErrorUserExist         = errors.New("用户已存在")
+	ErrorUserNotExist      = errors.New("用户名不存在")
+	ErrorUserPassowrdWrong = errors.New("用户密码错误")
+)
+
 //用户注册
 func SignUp(p *models.ParamSignUp) (err error) {
 	//查重
@@ -22,7 +29,7 @@ func SignUp(p *models.ParamSignUp) (err error) {
 
 	if hads {
 		//是否已有用户名相同用户  抛出错误
-		return errors.New("用户已存在")
+		return ErrorUserExist
 	}
 
 	//生成uid
@@ -55,7 +62,7 @@ func GetUserInfoByUserId(p *models.ParamGetuserinfoByUID) (*models.Userinfopubli
 func LoginCheckPassword(p *models.ParamLoginIn) (bool, error) {
 	userinfo, err := daomysql.GetUserInfoByUsernameForLogin(p.Username)
 	if err == sql.ErrNoRows {
-		return false, errors.New("用户名不存在")
+		return false, ErrorUserNotExist
 	}
 	if err != nil {
 		return false, err
@@ -67,5 +74,5 @@ func LoginCheckPassword(p *models.ParamLoginIn) (bool, error) {
 	if aftermd5pw == userinfo.Password {
 		return true, nil
 	}
-	return false, nil
+	return false, ErrorUserPassowrdWrong
 }

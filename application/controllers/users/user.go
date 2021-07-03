@@ -11,6 +11,7 @@ import (
 	"mygin/dao/daoredis"
 	"mygin/settings"
 	"mygin/tools/gincaptcha"
+	"mygin/tools/ginresponse"
 	"mygin/tools/qrcode"
 	"net/http"
 	"strconv"
@@ -27,10 +28,8 @@ func SignUpHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&p); err != nil {
 		//请求参数有误 返回响应  日志记录错误
 		zap.L().Error("SignUp with invalid param", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1002",
-			"msg":  settings.CodeSetting[1002],
-		})
+		//返回
+		ginresponse.Response(c, settings.CodeInvalidParam, nil)
 		return
 	}
 
@@ -38,17 +37,11 @@ func SignUpHandler(c *gin.Context) {
 	err := logic.SignUp(p)
 	if err != nil {
 		zap.L().Error("SignUp failed in logic prase", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1004",
-			"msg":  settings.CodeSetting[1004],
-		})
+		ginresponse.Response(c, settings.CodeRegisterFail, nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": "1001",
-		"msg":  settings.CodeSetting[1001],
-	})
+	ginresponse.Response(c, settings.CodeSuccess, nil)
 }
 
 //根据userid 获取用户信息
@@ -57,10 +50,7 @@ func GetUserInfer(c *gin.Context) {
 	if err := c.ShouldBindJSON(&p); err != nil {
 		//请求参数有误 返回响应  日志记录错误
 		zap.L().Error("get userinfo by user_id", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1002",
-			"msg":  settings.CodeSetting[1002],
-		})
+		ginresponse.Response(c, settings.CodeInvalidParam, nil)
 		return
 	}
 
@@ -69,21 +59,13 @@ func GetUserInfer(c *gin.Context) {
 		zap.L().Error("get userinfo by user_id dao failed", zap.Error(err))
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": "1001",
-		"msg":  settings.CodeSetting[1001],
-		"data": userinfo,
-	})
+	ginresponse.Response(c, settings.CodeSuccess, userinfo)
 }
 
 //生成验证码
 func Captcha(c *gin.Context) {
 	cap := gincaptcha.GenCaptcha()
-	c.JSON(http.StatusOK, gin.H{
-		"code": "1001",
-		"msg":  settings.CodeSetting[1001],
-		"data": cap,
-	})
+	ginresponse.Response(c, settings.CodeSuccess, cap)
 }
 
 //获取验证码图
@@ -98,19 +80,13 @@ func Verify(c *gin.Context) {
 	value := c.Param("value")
 	result, err := gincaptcha.VerifyCaptcha(captchaId, value)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1002",
-			"msg":  settings.CodeSetting[1002],
-			"data": [1]string{},
-		})
+		ginresponse.Response(c, settings.CodeInvalidParam, nil)
 		return
 	}
 	if result {
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1001",
-			"msg":  settings.CodeSetting[1001],
-			"data": [1]string{},
-		})
+		ginresponse.Response(c, settings.CodeSuccess, nil)
+	} else {
+		ginresponse.Response(c, settings.CodeVerifyWrong, nil)
 	}
 }
 
@@ -126,10 +102,7 @@ func LoginInHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&p); err != nil {
 		//请求参数有误 返回响应  日志记录错误
 		zap.L().Error("LoginIn with invalid param", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1002",
-			"msg":  settings.CodeSetting[1002],
-		})
+		ginresponse.Response(c, settings.CodeInvalidParam, nil)
 		return
 	}
 
@@ -137,24 +110,14 @@ func LoginInHandler(c *gin.Context) {
 	result, err := logic.LoginCheckPassword(p)
 	if err != nil {
 		zap.L().Error("LoginIn with check password faild", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1005",
-			"msg":  settings.CodeSetting[1005],
-			"data": err.Error(),
-		})
+		ginresponse.Response(c, settings.CodeCheckPasswordThroughWrong, nil)
 		return
 	}
 
 	if !result {
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1006",
-			"msg":  settings.CodeSetting[1006],
-		})
+		ginresponse.Response(c, settings.CodePasswordOrUsernameWrong, nil)
 	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code": "1001",
-			"msg":  settings.CodeSetting[1001],
-		})
+		ginresponse.Response(c, settings.CodeSuccess, nil)
 	}
 
 }

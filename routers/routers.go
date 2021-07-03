@@ -32,12 +32,15 @@ func SetupRouter(mode string) *gin.Engine {
 
 	v1 := r.Group("/v1")
 	{
-		v1.POST("/signup", user.SignUpHandler)           //用户注册
+		//注册
+		v1.POST("/signup", user.SignUpHandler) //用户注册
+		//登录
 		v1.GET("/captcha", user.Captcha)                 //验证码生成
 		v1.GET("/captcha/:captchaId", user.GetCaptcha)   //验证码图片获取
 		v1.GET("/verify/:captchaId/:value", user.Verify) //验证码验证
 		v1.POST("/login", user.LoginInHandler)           //用户登录
-		v1.POST("/getuserinfo", user.GetUserInfer)       //用户获取用户信息
+		//
+		v1.POST("/getuserinfo", user.GetUserInfer) //用户获取用户信息
 	}
 
 	//r.GET("/hello", helloHandler)
