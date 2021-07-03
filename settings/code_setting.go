@@ -10,6 +10,8 @@ const (
 	CodeCheckPasswordThroughWrong               //验证密码过程错误
 	CodePasswordOrUsernameWrong                 //用户名或密码错误
 	CodeVerifyWrong                             //验证码输入错误
+	CodeUserExist                               //用户已存在
+	CodeUserNotExist                            //用户不存在
 	CodeServerBusy                              //服务繁忙
 )
 
@@ -22,5 +24,7 @@ var CodeSetting = [...]string{
 	1005: "验证密码过程错误",
 	1006: "用户名或密码错误",
 	1007: "验证码输入错误",
-	1008: "服务繁忙",
+	1008: "用户已存在",
+	1009: "用户不存在",
+	1010: "服务繁忙",
 }

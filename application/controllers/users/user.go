@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
@@ -35,6 +36,11 @@ func SignUpHandler(c *gin.Context) {
 
 	//注册逻辑
 	err := logic.SignUp(p)
+	if errors.Is(err, logic.ErrorUserExist) {
+		zap.L().Error("SignUp failed in logic prase -USER EXSIT", zap.Error(err))
+		ginresponse.Response(c, settings.CodeUserExist, nil)
+		return
+	}
 	if err != nil {
 		zap.L().Error("SignUp failed in logic prase", zap.Error(err))
 		ginresponse.Response(c, settings.CodeRegisterFail, nil)
@@ -85,8 +91,10 @@ func Verify(c *gin.Context) {
 	}
 	if result {
 		ginresponse.Response(c, settings.CodeSuccess, nil)
+		return
 	} else {
 		ginresponse.Response(c, settings.CodeVerifyWrong, nil)
+		return
 	}
 }
 
@@ -108,17 +116,31 @@ func LoginInHandler(c *gin.Context) {
 
 	//校验参数
 	result, err := logic.LoginCheckPassword(p)
+	//用户不存在
+	if errors.Is(err, logic.ErrorUserNotExist) {
+		zap.L().Error("login failed in ErrorUserNotExist", zap.Error(err))
+		ginresponse.Response(c, settings.CodeUserNotExist, nil)
+		return
+	}
+	//用户密码错误
+	if errors.Is(err, logic.ErrorUserPassowrdWrong) {
+		zap.L().Error("login failed in ErrorUserPassowrdWrong", zap.Error(err))
+		ginresponse.Response(c, settings.CodeCheckPasswordWrong, nil)
+		return
+	}
+	//有其他error
 	if err != nil {
 		zap.L().Error("LoginIn with check password faild", zap.Error(err))
 		ginresponse.Response(c, settings.CodeCheckPasswordThroughWrong, nil)
 		return
 	}
 
-	if !result {
-		ginresponse.Response(c, settings.CodePasswordOrUsernameWrong, nil)
-	} else {
+	if result {
 		ginresponse.Response(c, settings.CodeSuccess, nil)
+		return
 	}
+	ginresponse.Response(c, settings.CodePasswordOrUsernameWrong, nil)
+	return
 
 }
 
