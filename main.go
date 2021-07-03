@@ -38,7 +38,6 @@ func main() {
 	//defer daomysql.Close()
 	zap.L().Debug(daomysql.MysqlGoroseInitConnectParamInMain(settings.SettingGlb.Mysql))
 	defer daomysql.Gclose()
-
 	//6.载入路由
 	r := routers.SetupRouter(settings.SettingGlb.App.Mode)
 

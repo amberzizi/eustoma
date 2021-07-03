@@ -4,8 +4,8 @@ import (
 	"mygin/application/models"
 )
 
-//插重
-func GetUserInfoByUsername(username string) (bool, error) {
+//查重
+func CheckUserInfoByUsername(username string) (bool, error) {
 	var connection = ReturnMsqlGoroseConnection()
 	db := connection.NewSession()
 	//var user models.User
@@ -28,11 +28,20 @@ func InsertUser(user map[string]interface{}) (err error) {
 }
 
 //获取用户信息 根据 user_id
-func GetUserInfoByUserId(user_id int) (*models.Userinfopublic, error) {
+func GetUserInfoByUserId(user_id int64) (*models.Userinfopublic, error) {
 	var connection = ReturnMsqlGoroseConnection()
 	var userinfo models.Userinfopublic
 	db := connection.NewSession()
 	err := db.Table(&userinfo).Where("user_id", user_id).Select()
+	return &userinfo, err
+}
+
+//获取用户信息 根据 user_id
+func GetUserInfoByUsernameForJWT(username string) (*models.Userforjwt, error) {
+	var connection = ReturnMsqlGoroseConnection()
+	var userinfo models.Userforjwt
+	db := connection.NewSession()
+	err := db.Table(&userinfo).Where("username", username).Select()
 	return &userinfo, err
 }
 

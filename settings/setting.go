@@ -28,6 +28,7 @@ type App struct {
 	Shutdownwait int    `mapstructure:"shutdownwait"`
 	Idstarttime  string `mapstructure:"idstarttime"`
 	Machineid    int    `mapstructure:"machineid"`
+	Jwtkey       string `mapstructure:"jwtkey"`
 }
 type Mysql struct {
 	Host              string `mapstructure:"host"`

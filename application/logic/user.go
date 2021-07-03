@@ -7,6 +7,7 @@ import (
 	"mygin/application/models"
 	"mygin/dao/daomysql"
 	"mygin/tools/encryption"
+	"mygin/tools/ginjwt"
 	"mygin/tools/randstring"
 	"mygin/tools/snowflake"
 )
@@ -21,7 +22,7 @@ var (
 //用户注册
 func SignUp(p *models.ParamSignUp) (err error) {
 	//查重
-	hads, err := daomysql.GetUserInfoByUsername(p.Username)
+	hads, err := daomysql.CheckUserInfoByUsername(p.Username)
 	if err != nil {
 		//如有执行报错 传递
 		return err
@@ -53,7 +54,7 @@ func SignUp(p *models.ParamSignUp) (err error) {
 
 //获取用户信息 by userid
 func GetUserInfoByUserId(p *models.ParamGetuserinfoByUID) (*models.Userinfopublic, error) {
-	userinfo, err := daomysql.GetUserInfoByUserId(p.User_id)
+	userinfo, err := daomysql.GetUserInfoByUserId(int64(p.User_id))
 	return userinfo, err
 
 }
@@ -75,4 +76,35 @@ func LoginCheckPassword(p *models.ParamLoginIn) (bool, error) {
 		return true, nil
 	}
 	return false, ErrorUserPassowrdWrong
+}
+
+//生成jwttoken
+func GenUserJwtToken(p *models.ParamLoginIn) (string, error) {
+	userinfo, err := daomysql.GetUserInfoByUsernameForJWT(p.Username)
+	if err == sql.ErrNoRows {
+		return "", ErrorUserNotExist
+	}
+	if err != nil {
+		return "", err
+	}
+	token, err := ginjwt.GenJwtToken(p.Username, userinfo.User_id)
+	if err != nil {
+		return "", err
+	}
+	return token, err
+}
+
+//解析jwttoken
+func ParseUserJwtToken(tokenString string) (*models.Userinfopublic, error) {
+	jwtinfo, err := ginjwt.ParseJwtToken(tokenString)
+	if err != nil {
+		return nil, err
+	}
+
+	userinfo, err := daomysql.GetUserInfoByUserId(jwtinfo.User_id)
+	if err != nil {
+		return nil, err
+	}
+
+	return userinfo, err
 }

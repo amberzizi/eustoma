@@ -39,6 +39,12 @@ type Userforlogin struct {
 	//Update_time string
 }
 
+//用来生成jwt的信息
+type Userforjwt struct {
+	User_id  int64
+	Username string
+}
+
 func (u User) TableName() string {
 	return "user"
 }
@@ -48,5 +54,8 @@ func (u Userinfopublic) TableName() string {
 }
 
 func (u Userforlogin) TableName() string {
+	return "user"
+}
+func (u Userforjwt) TableName() string {
 	return "user"
 }

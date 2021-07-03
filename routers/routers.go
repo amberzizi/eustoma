@@ -40,7 +40,8 @@ func SetupRouter(mode string) *gin.Engine {
 		v1.GET("/verify/:captchaId/:value", user.Verify) //验证码验证
 		v1.POST("/login", user.LoginInHandler)           //用户登录
 		//
-		v1.POST("/getuserinfo", user.GetUserInfer) //用户获取用户信息
+		v1.POST("/getuserinfo", user.GetUserInfer)                //用户获取用户信息
+		v1.POST("/parseuserjwttokentest", user.ParseUserJwtToken) //测试用户jwttoken解析
 	}
 
 	//r.GET("/hello", helloHandler)

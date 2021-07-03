@@ -13,6 +13,8 @@ const (
 	CodeUserExist                               //用户已存在
 	CodeUserNotExist                            //用户不存在
 	CodeServerBusy                              //服务繁忙
+	ErrorInvalidToken                           //无效token
+	ErrorGenToken                               //生成token失败
 )
 
 var CodeSetting = [...]string{
@@ -27,4 +29,6 @@ var CodeSetting = [...]string{
 	1008: "用户已存在",
 	1009: "用户不存在",
 	1010: "服务繁忙",
+	1011: "无效token",
+	1012: "生成token失败",
 }

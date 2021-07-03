@@ -19,3 +19,8 @@ type ParamLoginIn struct {
 type ParamGetuserinfoByUID struct {
 	User_id int `json:"user_id" binding:"required"`
 }
+
+//提交jwt 测试
+type ParamTestJwtToken struct {
+	Jwttoken string `json:"jwttoken" binding:"required"`
+}

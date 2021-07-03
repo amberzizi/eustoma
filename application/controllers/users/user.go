@@ -136,12 +136,39 @@ func LoginInHandler(c *gin.Context) {
 	}
 
 	if result {
-		ginresponse.Response(c, settings.CodeSuccess, nil)
+		jwttoken, err := logic.GenUserJwtToken(p)
+		if err != nil {
+			zap.L().Error("LoginIn with gen jwt token faild", zap.Error(err))
+			ginresponse.Response(c, settings.ErrorGenToken, nil)
+			return
+		}
+		ginresponse.Response(c, settings.CodeSuccess, jwttoken)
 		return
 	}
+
 	ginresponse.Response(c, settings.CodePasswordOrUsernameWrong, nil)
 	return
 
+}
+
+//测试用户jwttoken解析
+func ParseUserJwtToken(c *gin.Context) {
+
+	p := new(models.ParamTestJwtToken)
+	if err := c.ShouldBindJSON(&p); err != nil {
+		//请求参数有误 返回响应  日志记录错误
+		zap.L().Error("LoginIn with invalid param", zap.Error(err))
+		ginresponse.Response(c, settings.CodeInvalidParam, nil)
+		return
+	}
+
+	userinfo, err := logic.ParseUserJwtToken(p.Jwttoken)
+	if err != nil {
+		zap.L().Error("LoginIn with Parse Jwt Token faild", zap.Error(err))
+		ginresponse.Response(c, settings.ErrorInvalidToken, nil)
+		return
+	}
+	ginresponse.Response(c, settings.CodeSuccess, userinfo)
 }
 
 func Sendinfo(c *gin.Context) {
