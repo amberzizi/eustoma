@@ -78,7 +78,7 @@ func LoginCheckPassword(p *models.ParamLoginIn) (bool, error) {
 	return false, ErrorUserPassowrdWrong
 }
 
-//生成jwttoken
+//生成jwttoken accesstoken
 func GenUserJwtToken(p *models.ParamLoginIn) (string, error) {
 	userinfo, err := daomysql.GetUserInfoByUsernameForJWT(p.Username)
 	if err == sql.ErrNoRows {
@@ -88,6 +88,24 @@ func GenUserJwtToken(p *models.ParamLoginIn) (string, error) {
 		return "", err
 	}
 	token, err := ginjwt.GenJwtToken(p.Username, userinfo.User_id)
+	if err != nil {
+		return "", err
+	}
+	return token, err
+}
+
+//生成jwttoken refreshtoken
+func GenUserJwtRefreshToken() (string, error) {
+	token, err := ginjwt.GenJwtRefreshToken()
+	if err != nil {
+		return "", err
+	}
+	return token, err
+}
+
+//刷新accesstoken
+func GetUserNewAccesstoken(p *models.ParamRefreshAccessToken) (string, error) {
+	token, err := ginjwt.RefreshTokenForNewAccessToken(p.Accesstoken, p.Refreshtoken)
 	if err != nil {
 		return "", err
 	}

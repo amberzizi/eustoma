@@ -41,15 +41,18 @@ func SetupRouter(mode string) *gin.Engine {
 			v1.GET("/captcha", user.Captcha)                              //验证码生成
 			v1.GET("/captcha/:captchaId", user.GetCaptcha)                //验证码图片获取
 			v1.GET("/verify/:captchaId/:value", user.Verify)              //验证码验证
-			v1.POST("/login", user.LoginInHandler)                        //用户登录
+			v1.POST("/login", user.LoginInHandler)                        //用户登录并生成accesstoken+refreshtoken
+			v1.POST("/getusernewaccesstoken", user.GetUserNewAccesstoken) //当用户auth认证返回accesstoken401的时候使用此接口用refresstoken获取newaccesstoken
 			v1.POST("/getuserinfo", user.GetUserInfer)                    //用户获取用户信息
-			v1.POST("/parseuserjwttokentest", user.ParseUserJwtTokenTest) //测试用户jwttoken解析
+
 		}
 
-		//需登录中间件
+		//测试登录中间件
 		v1.GET("/ping", middlewares.JwtAuthMiddleware(), func(c *gin.Context) {
 			c.JSON(http.StatusOK, "pong")
 		})
+		//用户登录后获取token携带信息
+		v1.GET("/getuserinfoafterlogin", middlewares.JwtAuthMiddleware(), user.GetUserInferAfterLogin)
 
 	}
 	return r

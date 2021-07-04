@@ -1,4 +1,4 @@
-package ginresponse
+package gin_request_response
 
 import (
 	"github.com/gin-gonic/gin"
@@ -30,4 +30,13 @@ func Response(c *gin.Context, code int, data interface{}) {
 		Data: data,
 	}
 	c.JSON(http.StatusOK, rd)
+}
+
+func Response401(c *gin.Context, code int, data interface{}) {
+	rd := &ResponseData{
+		Code: code,
+		Msg:  settings.CodeSetting[code],
+		Data: data,
+	}
+	c.JSON(http.StatusUnauthorized, rd)
 }

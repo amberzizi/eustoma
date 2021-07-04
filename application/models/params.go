@@ -24,3 +24,9 @@ type ParamGetuserinfoByUID struct {
 type ParamTestJwtToken struct {
 	Jwttoken string `json:"jwttoken" binding:"required"`
 }
+
+//刷新accesstoken
+type ParamRefreshAccessToken struct {
+	Refreshtoken string `json:"refreshtoken" binding:"required"`
+	Accesstoken  string `json:"accesstoken" binding:"required"`
+}

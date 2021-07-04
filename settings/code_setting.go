@@ -2,21 +2,23 @@ package settings
 
 //定义错误码
 const (
-	Codefail                      = 1000 + iota //"faild"
-	CodeSuccess                                 //"success",
-	CodeInvalidParam                            //"请求参数有误",
-	CodeCheckPasswordWrong                      //密码验证输入错误
-	CodeRegisterFail                            //注册失败
-	CodeCheckPasswordThroughWrong               //验证密码过程错误
-	CodePasswordOrUsernameWrong                 //用户名或密码错误
-	CodeVerifyWrong                             //验证码输入错误
-	CodeUserExist                               //用户已存在
-	CodeUserNotExist                            //用户不存在
-	CodeServerBusy                              //服务繁忙
-	ErrorInvalidToken                           //无效token
-	ErrorGenToken                               //生成token失败
-	ErrorEmptyToken                             //无认证token
-	ErrorFormatToken                            //token格式错误
+	Codefail                         = 1000 + iota //"faild"
+	CodeSuccess                                    //"success",
+	CodeInvalidParam                               //"请求参数有误",
+	CodeCheckPasswordWrong                         //密码验证输入错误
+	CodeRegisterFail                               //注册失败
+	CodeCheckPasswordThroughWrong                  //验证密码过程错误
+	CodePasswordOrUsernameWrong                    //用户名或密码错误
+	CodeVerifyWrong                                //验证码输入错误
+	CodeUserExist                                  //用户已存在
+	CodeUserNotExist                               //用户不存在
+	CodeServerBusy                                 //服务繁忙
+	ErrorInvalidToken                              //无效token
+	ErrorGenToken                                  //生成token失败
+	ErrorEmptyToken                                //无认证token
+	ErrorFormatToken                               //token格式错误
+	ErrorUserNotLogin                              //用户未登录
+	ErrorAccessTokenExpiredOutOfTime               //accesstoken过期
 )
 
 var CodeSetting = [...]string{
@@ -35,4 +37,6 @@ var CodeSetting = [...]string{
 	1012: "生成token失败",
 	1013: "无认证token,请登录",
 	1014: "token格式错误",
+	1015: "用户未登录",
+	1016: "accesstoken过期",
 }

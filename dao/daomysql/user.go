@@ -36,7 +36,7 @@ func GetUserInfoByUserId(user_id int64) (*models.Userinfopublic, error) {
 	return &userinfo, err
 }
 
-//获取用户信息 根据 user_id
+//获取用户username 获取 user_id
 func GetUserInfoByUsernameForJWT(username string) (*models.Userforjwt, error) {
 	var connection = ReturnMsqlGoroseConnection()
 	var userinfo models.Userforjwt

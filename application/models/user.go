@@ -1,5 +1,8 @@
 package models
 
+//统一使用的常量名称
+const ContextUserIdKey = "user_id" //用户登录后上下文携带的user_id
+
 //完整用户信息
 type User struct {
 	Id          int64
