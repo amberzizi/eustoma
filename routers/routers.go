@@ -47,7 +47,7 @@ func SetupRouter(mode string) *gin.Engine {
 
 		}
 
-		//测试登录中间件
+		//测试登录中间件 ceshi
 		//测试登录中间件 用户登录后获取token携带信息
 		v1.GET("/getuserinfoafterlogin", middlewares.JwtAuthMiddleware(), user.GetUserInferAfterLogin)
 
