@@ -48,10 +48,7 @@ func SetupRouter(mode string) *gin.Engine {
 		}
 
 		//测试登录中间件
-		v1.GET("/ping", middlewares.JwtAuthMiddleware(), func(c *gin.Context) {
-			c.JSON(http.StatusOK, "pong")
-		})
-		//用户登录后获取token携带信息
+		//测试登录中间件 用户登录后获取token携带信息
 		v1.GET("/getuserinfoafterlogin", middlewares.JwtAuthMiddleware(), user.GetUserInferAfterLogin)
 
 	}

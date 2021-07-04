@@ -119,13 +119,13 @@ func GetUserNewAccesstoken(p *models.ParamRefreshAccessToken) (string, error) {
 	return token, err
 }
 
-//从数据库内取出userid对应的accecctoken
+//从数据库内取出userid对应的accecctoken redis
 func GetOnlineAccesstokenByUserID_ForRelation(user_id int64) (string, error) {
 	re, err := daoredis.GetAccesstokenByUserID(strconv.FormatInt(user_id, 10))
 	return re, err
 }
 
-//设置对应accesstoken
+//设置对应accesstoken  redis
 func SetAccesstokenByUserID_ForRelation(user_id int64, atoken string) error {
 	err := daoredis.SetAccesstokenByUserID(strconv.FormatInt(user_id, 10), atoken)
 	return err
