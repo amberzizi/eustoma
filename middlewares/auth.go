@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+const ContextUserIdKey = "user_id"
+
 //auth middleware
 func JwtAuthMiddleware() func(c *gin.Context) {
 	return func(c *gin.Context) {
@@ -31,7 +33,7 @@ func JwtAuthMiddleware() func(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		c.Set("user_id", mc.User_id) //为c上下文对象绑定新参数user_id 使用中间件的路由即可获取
+		c.Set(ContextUserIdKey, mc.User_id) //为c上下文对象绑定新参数user_id 使用中间件的路由即可获取
 		c.Next()
 
 	}
