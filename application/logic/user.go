@@ -6,10 +6,12 @@ import (
 	"errors"
 	"mygin/application/models"
 	"mygin/dao/daomysql"
+	"mygin/dao/daoredis"
 	"mygin/tools/encryption"
 	"mygin/tools/ginjwt"
 	"mygin/tools/randstring"
 	"mygin/tools/snowflake"
+	"strconv"
 )
 
 //定义自定义error
@@ -91,6 +93,9 @@ func GenUserJwtToken(p *models.ParamLoginIn) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	//成功登录 ，保存对应关系到redis 用以单点登录检查
+	SetAccesstokenByUserID_ForRelation(userinfo.User_id, token)
+
 	return token, err
 }
 
@@ -105,24 +110,38 @@ func GenUserJwtRefreshToken() (string, error) {
 
 //刷新accesstoken
 func GetUserNewAccesstoken(p *models.ParamRefreshAccessToken) (string, error) {
-	token, err := ginjwt.RefreshTokenForNewAccessToken(p.Accesstoken, p.Refreshtoken)
+	token, user_id, err := ginjwt.RefreshTokenForNewAccessToken(p.Accesstoken, p.Refreshtoken)
 	if err != nil {
 		return "", err
 	}
+	//成功刷新 刷新accesstoken后 重新为userid绑定
+	SetAccesstokenByUserID_ForRelation(user_id, token)
 	return token, err
 }
 
-//解析jwttoken
-func ParseUserJwtToken(tokenString string) (*models.Userinfopublic, error) {
-	jwtinfo, err := ginjwt.ParseJwtToken(tokenString)
-	if err != nil {
-		return nil, err
-	}
-
-	userinfo, err := daomysql.GetUserInfoByUserId(jwtinfo.User_id)
-	if err != nil {
-		return nil, err
-	}
-
-	return userinfo, err
+//从数据库内取出userid对应的accecctoken
+func GetOnlineAccesstokenByUserID_ForRelation(user_id int64) (string, error) {
+	re, err := daoredis.GetAccesstokenByUserID(strconv.FormatInt(user_id, 10))
+	return re, err
 }
+
+//设置对应accesstoken
+func SetAccesstokenByUserID_ForRelation(user_id int64, atoken string) error {
+	err := daoredis.SetAccesstokenByUserID(strconv.FormatInt(user_id, 10), atoken)
+	return err
+}
+
+////解析jwttoken
+//func ParseUserJwtToken(tokenString string) (*models.Userinfopublic, error) {
+//	jwtinfo, err := ginjwt.ParseJwtToken(tokenString)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	userinfo, err := daomysql.GetUserInfoByUserId(jwtinfo.User_id)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return userinfo, err
+//}

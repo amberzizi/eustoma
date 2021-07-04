@@ -66,13 +66,13 @@ func ParseJwtToken(tokenString string) (*models.MyJwtInfo, error) {
 }
 
 //使用freshtoken 更新 accesstoken
-func RefreshTokenForNewAccessToken(aToken, rToken string) (string, error) {
+func RefreshTokenForNewAccessToken(aToken, rToken string) (string, int64, error) {
 	//refresh token 无效直接返回
 	if _, err := jwt.Parse(rToken,
 		func(token *jwt.Token) (i interface{}, err error) {
 			return models.GetJwtTokenKey(), nil
 		}); err != nil {
-		return "", err
+		return "", 0, err
 	}
 	//从旧的accesstoken中解析出claims数据
 	var claims models.MyJwtInfo
@@ -83,10 +83,11 @@ func RefreshTokenForNewAccessToken(aToken, rToken string) (string, error) {
 		v, _ := err.(*jwt.ValidationError)
 		//当accesstoken 是过期错误 并且refreshtoken没过期时就创建并返回一个新的accesstoken
 		if v.Errors == jwt.ValidationErrorExpired {
-			return GenJwtToken(claims.Username, claims.User_id)
+			atoken, err := GenJwtToken(claims.Username, claims.User_id)
+			return atoken, claims.User_id, err
 		}
 	}
 
 	//如果解析未出问题 原始accesstoken也未过期 返回原始accesstoken
-	return aToken, err
+	return aToken, claims.User_id, err
 }
