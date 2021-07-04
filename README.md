@@ -2,7 +2,7 @@
 Blog golang Gin
 
 ###调用顺序：
-main->router->application/controllers->logic->dao/daomysql  
+main->router->[middleware]->application/controllers->logic->dao/daomysql  
 main 入口
 router 路由  
 controllers 控制器  
@@ -14,4 +14,8 @@ dao 数据库操作
 库实例模型：models：user.go  
 
 ###返回码
-settings code_setting.go  
+settings code_setting.go 
+
+###token  
+jwt+accesstoken+refreshtoken  
+user_id=>accesstoken + redis 单点登录  
