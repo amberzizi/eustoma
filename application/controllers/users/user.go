@@ -134,11 +134,11 @@ func LoginInHandler(c *gin.Context) {
 		ginresponse.Response(c, settings.CodeCheckPasswordThroughWrong, nil)
 		return
 	}
-
+	//用户名密码匹配 生成jwttoken
 	if result {
 		jwttoken, err := logic.GenUserJwtToken(p)
 		if err != nil {
-			zap.L().Error("LoginIn with gen jwt token faild", zap.Error(err))
+			zap.L().Error("Login In  gen jwt token faild", zap.Error(err))
 			ginresponse.Response(c, settings.ErrorGenToken, nil)
 			return
 		}
@@ -152,7 +152,7 @@ func LoginInHandler(c *gin.Context) {
 }
 
 //测试用户jwttoken解析
-func ParseUserJwtToken(c *gin.Context) {
+func ParseUserJwtTokenTest(c *gin.Context) {
 
 	p := new(models.ParamTestJwtToken)
 	if err := c.ShouldBindJSON(&p); err != nil {

@@ -15,6 +15,8 @@ const (
 	CodeServerBusy                              //服务繁忙
 	ErrorInvalidToken                           //无效token
 	ErrorGenToken                               //生成token失败
+	ErrorEmptyToken                             //无认证token
+	ErrorFormatToken                            //token格式错误
 )
 
 var CodeSetting = [...]string{
@@ -31,4 +33,6 @@ var CodeSetting = [...]string{
 	1010: "服务繁忙",
 	1011: "无效token",
 	1012: "生成token失败",
+	1013: "无认证token,请登录",
+	1014: "token格式错误",
 }
