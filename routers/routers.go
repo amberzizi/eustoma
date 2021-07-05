@@ -3,6 +3,7 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"mygin/application/controllers/community"
 	user "mygin/application/controllers/users"
 	"mygin/middlewares"
 	"net"
@@ -31,27 +32,35 @@ func SetupRouter(mode string) *gin.Engine {
 	r := gin.New()
 	r.Use(GinLogger(zap.L()), GinRecovery(zap.L(), true))
 
-	v1 := r.Group("/v1")
+	v1 := r.Group("/api/v1")
 	{
 		//无须中间件
-		v1.Group("")
-		{ //注册
-			v1.POST("/signup", user.SignUpHandler) //用户注册
-			//登录
-			v1.GET("/captcha", user.Captcha)                              //验证码生成
-			v1.GET("/captcha/:captchaId", user.GetCaptcha)                //验证码图片获取
-			v1.GET("/verify/:captchaId/:value", user.Verify)              //验证码验证
-			v1.POST("/login", user.LoginInHandler)                        //用户登录并生成accesstoken+refreshtoken
-			v1.POST("/getusernewaccesstoken", user.GetUserNewAccesstoken) //当用户auth认证返回accesstoken401的时候使用此接口用refresstoken获取newaccesstoken
-			v1.POST("/getuserinfo", user.GetUserInfer)                    //用户获取用户信息
+		//注册
+		v1.POST("/signup", user.SignUpHandler) //用户注册
+		//登录
+		v1.GET("/captcha", user.Captcha)                              //验证码生成
+		v1.GET("/captcha/:captchaId", user.GetCaptcha)                //验证码图片获取
+		v1.GET("/verify/:captchaId/:value", user.Verify)              //验证码验证
+		v1.POST("/login", user.LoginInHandler)                        //用户登录并生成accesstoken+refreshtoken
+		v1.POST("/getusernewaccesstoken", user.GetUserNewAccesstoken) //当用户auth认证返回accesstoken401的时候使用此接口用refresstoken获取newaccesstoken
+		v1.POST("/getuserinfo", user.GetUserInfer)                    //用户获取用户信息
 
+		//需要中间件
+		//jwt认证中间件
+		v1.Use(middlewares.JwtAuthMiddleware())
+		{
+			//测试登录中间件 用户登录后获取token携带信息
+			v1.GET("/getuserinfoafterlogin", user.GetUserInferAfterLogin)
+			//获取社区分类
+			v1.GET("/community", community.CommunityHandle)
 		}
-
-		//测试登录中间件 ceshi
-		//测试登录中间件 用户登录后获取token携带信息
-		v1.GET("/getuserinfoafterlogin", middlewares.JwtAuthMiddleware(), user.GetUserInferAfterLogin)
-
 	}
+
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "404",
+		})
+	})
 	return r
 }
 
