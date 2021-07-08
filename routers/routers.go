@@ -53,6 +53,8 @@ func SetupRouter(mode string) *gin.Engine {
 			v1.GET("/getuserinfoafterlogin", user.GetUserInferAfterLogin)
 			//获取社区分类
 			v1.GET("/community", community.CommunityHandle)
+			//根据id获取社区分类信息
+			v1.GET("/community/:communityId", community.GetCommunityInfoById)
 		}
 	}
 
