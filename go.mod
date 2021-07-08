@@ -3,6 +3,7 @@ module mygin
 go 1.16
 
 require (
+	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/boombuler/barcode v1.0.1
 	github.com/bwmarrin/snowflake v0.3.0 // indirect                    ===雪花ID算法===
 	github.com/cosmtrek/air v1.27.3 // indirect
@@ -21,6 +22,9 @@ require (
 	github.com/onsi/ginkgo v1.16.4 // indirect
 	github.com/onsi/gomega v1.13.0 // indirect
 	github.com/spf13/viper v1.8.1 //                                    ===成熟的多类型，支持远程配置中心载入配置库===
+	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/swaggo/gin-swagger v1.3.0 // indirect
+	github.com/swaggo/swag v1.7.0 // indirect                           ===文档生成===
 	go.uber.org/atomic v1.8.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect  								===zap日志库===

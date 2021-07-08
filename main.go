@@ -1,5 +1,19 @@
 package main
 
+// @title main
+// @version 1.0
+// @description eustoma讨论区
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name amberhu
+// @contact.url https://github.com/amberzizi
+// @contact.email amberoracle@163.com
+
+// @license.name Apache 2.0
+// @license.url
+
+// @host h
+// @BasePath b
 import (
 	"context"
 	"fmt"

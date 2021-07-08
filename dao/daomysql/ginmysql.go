@@ -23,12 +23,12 @@ func ReturnMsqlGoroseConnection() *gorose.Connection {
 	return gdb
 }
 
-// @title    initMySQL
-// @description   初始化数据库连接函数
-// @auth      amberhu         20210624 15:35
-// @param     daomysql           mysqlsetting     mysql设置参数
-// @return    none-db            sql.DB          为全局参数赋值
-// @return    err               error           报错
+// title    initMySQL
+// description   初始化数据库连接函数
+// auth      amberhu         20210624 15:35
+// param     daomysql           mysqlsetting     mysql设置参数
+// return    none-db            sql.DB          为全局参数赋值
+// return    err               error           报错
 func initMySQL(mysqlset *settings.Mysql) (err error) {
 	dsn := mysqlset.Username + ":" + mysqlset.Password + "@tcp(" + mysqlset.Host + ":" + mysqlset.Port + ")/" + mysqlset.Dbname
 	db, err = sql.Open("daomysql", dsn)

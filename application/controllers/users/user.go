@@ -19,9 +19,17 @@ import (
 	"time"
 )
 
-/**
-*用户注册
-**/
+//  SignUpHandler  用户注册
+//  @Summary  用户注册接口
+//  @Description 用户注册接口
+//  @Tags 注册
+//	@Accept application/json
+//	@Produce application/json
+//  @Param Authorization header string false "Bearer 用户令牌"
+//	@Param object query models.ParamSignUp true "注册参数"
+//	@Security ApiKeyAuth
+//  @Success 200 {object} []gin_request_response.ResponseData
+//  @Router /api/v1/signup [post]
 func SignUpHandler(c *gin.Context) {
 	//参数校验
 	//var p models.ParamSignUp
@@ -50,7 +58,17 @@ func SignUpHandler(c *gin.Context) {
 	gin_request_response.Response(c, settings.CodeSuccess, nil)
 }
 
-//根据userid 获取用户信息
+//  GetUserInfer  根据userid 获取用户信息
+//  @Summary  获取用户信息
+//  @Description 获取用户信息
+//  @Tags 获取用户信息BY UID
+//	@Accept application/json
+//	@Produce application/json
+//  @Param Authorization header string false "Bearer 用户令牌"
+//	@Param object query models.ParamGetuserinfoByUID true "参数"
+//	@Security ApiKeyAuth
+//  @Success 200 {object} []gin_request_response.ResponseData
+//  @Router /api/v1/getuserinf [post]
 func GetUserInfer(c *gin.Context) {
 	p := new(models.ParamGetuserinfoByUID)
 	if err := c.ShouldBindJSON(&p); err != nil {
@@ -98,11 +116,17 @@ func Verify(c *gin.Context) {
 	}
 }
 
-/**
-*用户登录
-完成验证码校验
-完成密码校验
-*/
+//  LoginInHandler  用户登录
+//  @Summary  用户登录
+//  @Description 用户登录
+//  @Tags 用户登录
+//	@Accept application/json
+//	@Produce application/json
+//  @Param Authorization header string false "Bearer 用户令牌"
+//	@Param object query models.ParamLoginIn true "参数"
+//	@Security ApiKeyAuth
+//  @Success 200 {object} []gin_request_response.ResponseData
+//  @Router /api/v1/login [post]
 func LoginInHandler(c *gin.Context) {
 	//参数校验
 	//var p models.ParamSignUp

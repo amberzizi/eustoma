@@ -1,0 +1,128 @@
+basePath: b
+definitions:
+  gin_request_response.ResponseData:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+host: h
+info:
+  contact:
+    email: amberoracle@163.com
+    name: amberhu
+    url: https://github.com/amberzizi
+  description: eustoma讨论区
+  license:
+    name: Apache 2.0
+  termsOfService: http://swagger.io/terms/
+  title: main
+  version: "1.0"
+paths:
+  /api/v1/getuserinf:
+    post:
+      consumes:
+      - application/json
+      description: 获取用户信息
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/gin_request_response.ResponseData'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户信息
+      tags:
+      - 获取用户信息BY UID
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - in: query
+        name: password
+        required: true
+        type: string
+      - in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/gin_request_response.ResponseData'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: 用户登录
+      tags:
+      - 用户登录
+  /api/v1/signup:
+    post:
+      consumes:
+      - application/json
+      description: 用户注册接口
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - in: query
+        name: age
+        type: integer
+      - in: query
+        name: email
+        required: true
+        type: string
+      - in: query
+        name: password
+        required: true
+        type: string
+      - in: query
+        name: repassword
+        required: true
+        type: string
+      - in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/gin_request_response.ResponseData'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: 用户注册接口
+      tags:
+      - 注册
+swagger: "2.0"

@@ -2,9 +2,13 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	gs "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"go.uber.org/zap"
 	"mygin/application/controllers/community"
 	user "mygin/application/controllers/users"
+	_ "mygin/docs"
+
 	"mygin/middlewares"
 	"net"
 	"net/http"
@@ -32,8 +36,11 @@ func SetupRouter(mode string) *gin.Engine {
 	r := gin.New()
 	r.Use(GinLogger(zap.L()), GinRecovery(zap.L(), true))
 
+	//doc
+	r.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	v1 := r.Group("/api/v1")
 	{
+
 		//无须中间件
 		//注册
 		v1.POST("/signup", user.SignUpHandler) //用户注册
@@ -44,6 +51,9 @@ func SetupRouter(mode string) *gin.Engine {
 		v1.POST("/login", user.LoginInHandler)                        //用户登录并生成accesstoken+refreshtoken
 		v1.POST("/getusernewaccesstoken", user.GetUserNewAccesstoken) //当用户auth认证返回accesstoken401的时候使用此接口用refresstoken获取newaccesstoken
 		v1.POST("/getuserinfo", user.GetUserInfer)                    //用户获取用户信息
+		//获取社区分类
+		v1.GET("/community", community.CommunityHandle)
+		v1.GET("/community/:communityId", community.GetCommunityInfoById)
 
 		//需要中间件
 		//jwt认证中间件
@@ -51,10 +61,7 @@ func SetupRouter(mode string) *gin.Engine {
 		{
 			//测试登录中间件 用户登录后获取token携带信息
 			v1.GET("/getuserinfoafterlogin", user.GetUserInferAfterLogin)
-			//获取社区分类
-			v1.GET("/community", community.CommunityHandle)
-			//根据id获取社区分类信息
-			v1.GET("/community/:communityId", community.GetCommunityInfoById)
+
 		}
 	}
 
