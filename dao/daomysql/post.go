@@ -21,3 +21,10 @@ func GetPostDetailByPid(pid int64) (*models.PostDetail, error) {
 	err := db.Table(&postinfo).Where("post_id", pid).Select()
 	return &postinfo, err
 }
+
+func InsertPost(posinfo map[string]interface{}) (err error) {
+	var connection = ReturnMsqlGoroseConnection()
+	db := connection.NewSession()
+	_, err = db.Table("post").Data(posinfo).Insert()
+	return err
+}

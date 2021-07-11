@@ -30,3 +30,10 @@ type ParamRefreshAccessToken struct {
 	Refreshtoken string `json:"refreshtoken" binding:"required"`
 	Accesstoken  string `json:"accesstoken" binding:"required"`
 }
+
+//用户发布帖子
+type ParamUserPost struct {
+	Title        string `json:"title" binding:"required"`
+	Content      string `json:"content" binding:"required"`
+	Community_id int64  `json:"community_id" binding:"required"`
+}

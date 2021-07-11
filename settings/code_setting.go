@@ -22,6 +22,7 @@ const (
 	ErrorAccessTokenSingleLoginCheck                     //单点登录检查异常-查询异常
 	ErrorAccessTokenSingleLoginHavefreshed               //单点登录检查异常-已有新的登录token-请重新登录
 	CodeOutOfRange                                       //超出限制
+	CodePostError                                        //发布失败
 )
 
 var CodeSetting = [...]string{
@@ -45,4 +46,5 @@ var CodeSetting = [...]string{
 	1017: "单点登录检查异常-查询异常",
 	1018: "单点登录检查异常-已有新的登录token-请重新登录",
 	1019: "超出限制",
+	1020: "发布失败",
 }
