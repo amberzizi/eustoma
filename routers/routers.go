@@ -6,6 +6,7 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"go.uber.org/zap"
 	"mygin/application/controllers/community"
+	"mygin/application/controllers/post"
 	user "mygin/application/controllers/users"
 	_ "mygin/docs"
 
@@ -54,6 +55,8 @@ func SetupRouter(mode string) *gin.Engine {
 		//获取社区分类
 		v1.GET("/community", community.CommunityHandle)
 		v1.GET("/community/:communityId", community.GetCommunityInfoById)
+		//帖子
+		v1.GET("/postlist/:communityId/:page/:limit", post.PostListHandle)
 
 		//需要中间件
 		//jwt认证中间件
@@ -61,6 +64,8 @@ func SetupRouter(mode string) *gin.Engine {
 		{
 			//测试登录中间件 用户登录后获取token携带信息
 			v1.GET("/getuserinfoafterlogin", user.GetUserInferAfterLogin)
+			//帖子详情
+			v1.GET("/postlistdetail/:postId", post.PostListDetailHandle)
 
 		}
 	}

@@ -24,6 +24,11 @@ func CommunityHandle(c *gin.Context) {
 func GetCommunityInfoById(c *gin.Context) {
 	communityId := c.Param("communityId")
 	cid, err := strconv.ParseInt(communityId, 10, 64)
+	if err != nil {
+		zap.L().Error("GetCommunityInfoById param wrong", zap.Error(err))
+		gin_request_response.Response(c, settings.CodeInvalidParam, nil)
+		return
+	}
 	data, err := logic.GetCommunityInfoById(cid)
 	if err != nil {
 		zap.L().Error("GetCommunityInfoById faild", zap.Error(err))

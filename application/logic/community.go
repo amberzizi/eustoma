@@ -12,7 +12,7 @@ func GetCommunityList() ([]map[string]interface{}, error) {
 }
 
 //社区信息
-func GetCommunityInfoById(id int64) (*models.Community, error) {
+func GetCommunityInfoById(id int64) (*models.CommunityDetail, error) {
 	datas, err := daomysql.GetCommunityByCid(id)
 	return datas, err
 }
