@@ -11,8 +11,29 @@ func GetPostListByCid(cid int64, page int, limit int) ([]map[string]interface{},
 	datas, err := daomysql.GetPostListByCid(cid, page, limit)
 	return datas, err
 }
-func GetPostDetailByPid(pid int64) (*models.PostDetail, error) {
-	datas, err := daomysql.GetPostDetailByPid(pid)
+
+//帖子详情
+//使用了接口专用的模型ApiPostDetail
+func GetPostDetailByPid(pid int64) (*models.ApiPostDetail, error) {
+	//帖子详情数据使用ApiPostDetail结构体需要拼接
+	datapost, err := daomysql.GetPostDetailByPid(pid)
+	if err != nil {
+		return nil, err
+	}
+	datacommunity, err := daomysql.GetCommunityByCid(datapost.Community_id)
+	if err != nil {
+		return nil, err
+	}
+	datauser, err := daomysql.GetUserInfoByUserId(datapost.Author_id)
+	if err != nil {
+		return nil, err
+	}
+
+	datas := &models.ApiPostDetail{
+		AuthorName:      datauser.Username,
+		PostDetail:      datapost,
+		CommunityDetail: datacommunity,
+	}
 	return datas, err
 }
 
