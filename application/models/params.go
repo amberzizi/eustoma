@@ -17,7 +17,7 @@ type ParamLoginIn struct {
 
 //查询
 type ParamGetuserinfoByUID struct {
-	User_id int `json:"user_id" binding:"required"`
+	User_id int `json:"user_id,string" binding:"required"`
 }
 
 //提交jwt 测试
@@ -35,5 +35,11 @@ type ParamRefreshAccessToken struct {
 type ParamUserPost struct {
 	Title        string `json:"title" binding:"required"`
 	Content      string `json:"content" binding:"required"`
-	Community_id int64  `json:"community_id" binding:"required"`
+	Community_id int64  `json:"community_id,string" binding:"required"`
+}
+
+//帖子投票参数
+type ParamVotePost struct {
+	PostId    int64 `json:"post_id,string" binding:"required"`                //帖子id
+	Direction int8  `json:"direction,string" binding:"required,oneof=1 0 -1"` //赞成1 反对 -1  取消0
 }

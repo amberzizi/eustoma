@@ -10,6 +10,7 @@ import (
 	"strconv"
 )
 
+//帖子列表
 func PostListHandle(c *gin.Context) {
 	communityId := c.Param("communityId")
 	page := c.Param("page")
@@ -35,6 +36,7 @@ func PostListHandle(c *gin.Context) {
 	gin_request_response.Response(c, settings.CodeSuccess, data)
 }
 
+//帖子详情
 func PostListDetailHandle(c *gin.Context) {
 	postId := c.Param("postId")
 	pid, errc := strconv.ParseInt(postId, 10, 64)
@@ -76,4 +78,26 @@ func PostInfoHandle(c *gin.Context) {
 		gin_request_response.Response(c, settings.CodePostError, nil)
 	}
 	gin_request_response.Response(c, settings.CodeSuccess, nil)
+}
+
+//帖子投票
+func PostVoteHandle(c *gin.Context) {
+	//参数校验
+	//var p models.ParamSignUp
+	p := new(models.ParamVotePost)
+	if err := c.ShouldBindJSON(&p); err != nil {
+		//请求参数有误 返回响应  日志记录错误
+		zap.L().Error("PostInfoHandle with invalid param", zap.Error(err))
+		//返回
+		gin_request_response.Response(c, settings.CodeInvalidParam, nil)
+		return
+	}
+
+	//获取发布者user_id
+	user_id, err := gin_request_response.GetCurrentUser(c)
+	if err != nil {
+		gin_request_response.Response(c, settings.ErrorUserNotLogin, nil)
+	}
+
+	logic.PostVote(p, user_id)
 }

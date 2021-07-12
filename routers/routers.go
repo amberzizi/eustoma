@@ -66,7 +66,10 @@ func SetupRouter(mode string) *gin.Engine {
 			v1.GET("/getuserinfoafterlogin", user.GetUserInferAfterLogin)
 			//帖子详情
 			v1.GET("/postlistdetail/:postId", post.PostListDetailHandle)
+			//发布帖子
 			v1.POST("/postinfo", post.PostInfoHandle)
+			//投票
+			v1.POST("/vote", post.PostVoteHandle)
 
 		}
 	}
