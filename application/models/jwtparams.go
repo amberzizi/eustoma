@@ -16,7 +16,7 @@ const RefreshTokenExpireDuration = time.Hour * 24 * 7 //刷新token过期时间�
 //jwt包自带jwt.standandclaims 只包含了官方字段  需额外字段需自定义结构体
 type MyJwtInfo struct {
 	Username string `json:"username"`
-	User_id  int64  `json:"user_id"`
+	User_id  int64  `json:"user_id,string"`
 	jwt.StandardClaims
 }
 

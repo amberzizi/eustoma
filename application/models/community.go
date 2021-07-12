@@ -4,7 +4,7 @@ package models
 //完整的分类信息
 type Community struct {
 	//Id             int64
-	Community_id   int64
+	Community_id   int64 `json:"community_id,string"`
 	Community_name string
 	//Introduction   string
 	//Create_time    string
@@ -12,8 +12,8 @@ type Community struct {
 }
 
 type CommunityDetail struct {
-	Id             int64
-	Community_id   int64
+	Id             int64 `json:"id,string"`
+	Community_id   int64 `json:"community_id,string"`
 	Community_name string
 	Introduction   string
 	Create_time    string

@@ -139,7 +139,7 @@ func LoginInHandler(c *gin.Context) {
 	}
 
 	//校验参数
-	result, err := logic.LoginCheckPassword(p)
+	result, err, userinfopublic := logic.LoginCheckPassword(p)
 	//用户不存在
 	if errors.Is(err, logic.ErrorUserNotExist) {
 		zap.L().Error("login failed in ErrorUserNotExist", zap.Error(err))
@@ -168,7 +168,7 @@ func LoginInHandler(c *gin.Context) {
 			return
 		}
 		gin_request_response.Response(c, settings.CodeSuccess,
-			map[string]string{"accesstoken": jwttoken, "refreshtoken": jwttoken_refresh})
+			map[string]interface{}{"accesstoken": jwttoken, "refreshtoken": jwttoken_refresh, "userinfo": userinfopublic})
 		return
 	}
 

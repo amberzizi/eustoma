@@ -4,21 +4,21 @@ package models
 //完整的分类信息
 type Post struct {
 	//Id             int64
-	Post_id   int64
+	Post_id   int64 `json:"post_id,string"`
 	Title     string
-	Author_id int64
+	Author_id int64 `json:"author_id,string"`
 	//Introduction   string
 	//Create_time    string
 	//Update_time    string
 }
 
 type PostDetail struct {
-	Id           int64
-	Post_id      int64
+	Id           int64 `json:"id,string"`
+	Post_id      int64 `json:"post_id,string"`
 	Title        string
 	Content      string
-	Author_id    int64
-	Community_id int64
+	Author_id    int64 `json:"author_id,string"`
+	Community_id int64 `json:"community_id,string"`
 	Status       int
 	Create_time  string
 	Update_time  string

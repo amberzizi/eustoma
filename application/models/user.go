@@ -5,8 +5,8 @@ const ContextUserIdKey = "user_id" //用户登录后上下文携带的user_id
 
 //完整用户信息
 type User struct {
-	Id          int64
-	User_id     int64
+	Id          int64 `json:"id,string"`
+	User_id     int64 `json:"user_id,string"`
 	Username    string
 	Password    string
 	Salt        string
@@ -18,8 +18,8 @@ type User struct {
 
 //外部可用的用户信息
 type Userinfopublic struct {
-	Id       int64
-	User_id  int64
+	Id       int64 `json:"id,string"`
+	User_id  int64 `json:"user_id,string"`
 	Username string
 	//Password    string
 	//Salt        string
@@ -31,8 +31,8 @@ type Userinfopublic struct {
 
 //用来登录鉴别的user信息
 type Userforlogin struct {
-	Id       int64
-	User_id  int64
+	Id       int64 `json:"id,string"`
+	User_id  int64 `json:"user_id,string"`
 	Username string
 	Password string
 	Salt     string
@@ -44,7 +44,7 @@ type Userforlogin struct {
 
 //用来生成jwt的信息
 type Userforjwt struct {
-	User_id  int64
+	User_id  int64 `json:"user_id,string"`
 	Username string
 }
 

@@ -62,22 +62,23 @@ func GetUserInfoByUserId(p *models.ParamGetuserinfoByUID) (*models.Userinfopubli
 }
 
 //用户登录 校验密码
-func LoginCheckPassword(p *models.ParamLoginIn) (bool, error) {
+func LoginCheckPassword(p *models.ParamLoginIn) (bool, error, *models.Userinfopublic) {
 	userinfo, err := daomysql.GetUserInfoByUsernameForLogin(p.Username)
 	if err == sql.ErrNoRows {
-		return false, ErrorUserNotExist
+		return false, ErrorUserNotExist, nil
 	}
 	if err != nil {
-		return false, err
+		return false, err, nil
 	}
 	aftermd5pw, err := encryption.Md5(p.Password + userinfo.Salt)
 	if err != nil {
-		return false, err
+		return false, err, nil
 	}
 	if aftermd5pw == userinfo.Password {
-		return true, nil
+		userinfopublic, err := daomysql.GetUserInfoByUserId(userinfo.User_id)
+		return true, err, userinfopublic
 	}
-	return false, ErrorUserPassowrdWrong
+	return false, ErrorUserPassowrdWrong, nil
 }
 
 //生成jwttoken accesstoken
