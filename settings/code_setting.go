@@ -23,6 +23,8 @@ const (
 	ErrorAccessTokenSingleLoginHavefreshed               //单点登录检查异常-已有新的登录token-请重新登录
 	CodeOutOfRange                                       //超出限制
 	CodePostError                                        //发布失败
+	CodeVoteError                                        //投票失败
+	ErrorVoteOutOfTime                                   //超出投票时间
 )
 
 var CodeSetting = [...]string{
@@ -47,4 +49,6 @@ var CodeSetting = [...]string{
 	1018: "单点登录检查异常-已有新的登录token-请重新登录",
 	1019: "超出限制",
 	1020: "发布失败",
+	1021: "投票失败",
+	1022: "超出投票时间",
 }

@@ -1,6 +1,7 @@
 package post
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"mygin/application/logic"
@@ -99,5 +100,13 @@ func PostVoteHandle(c *gin.Context) {
 		gin_request_response.Response(c, settings.ErrorUserNotLogin, nil)
 	}
 
-	logic.PostVote(p, user_id)
+	result, err := logic.PostVote(p, user_id)
+	if errors.Is(err, logic.ErrorVoteOutOfTime) {
+		gin_request_response.Response(c, settings.ErrorVoteOutOfTime, nil)
+		return
+	}
+	if err != nil || !result {
+		gin_request_response.Response(c, settings.CodeVoteError, nil)
+	}
+	gin_request_response.Response(c, settings.CodeSuccess, nil)
 }

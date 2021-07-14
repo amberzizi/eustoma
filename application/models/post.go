@@ -1,5 +1,7 @@
 package models
 
+//统一使用的常量名称
+const CanVoteLimit = 3600 * 24 * 7 //允许投票的时间长度
 //分类模型
 //完整的分类信息
 type Post struct {
