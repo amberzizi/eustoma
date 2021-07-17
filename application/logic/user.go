@@ -3,7 +3,6 @@ package logic
 
 import (
 	"database/sql"
-	"errors"
 	"mygin/application/models"
 	"mygin/dao/daomysql"
 	"mygin/dao/daoredis"
@@ -12,13 +11,6 @@ import (
 	"mygin/tools/randstring"
 	"mygin/tools/snowflake"
 	"strconv"
-)
-
-//定义自定义error
-var (
-	ErrorUserExist         = errors.New("用户已存在")
-	ErrorUserNotExist      = errors.New("用户名不存在")
-	ErrorUserPassowrdWrong = errors.New("用户密码错误")
 )
 
 //用户注册
@@ -32,7 +24,7 @@ func SignUp(p *models.ParamSignUp) (err error) {
 
 	if hads {
 		//是否已有用户名相同用户  抛出错误
-		return ErrorUserExist
+		return models.ErrorUserExist
 	}
 
 	//生成uid
@@ -65,7 +57,7 @@ func GetUserInfoByUserId(p *models.ParamGetuserinfoByUID) (*models.Userinfopubli
 func LoginCheckPassword(p *models.ParamLoginIn) (bool, error, *models.Userinfopublic) {
 	userinfo, err := daomysql.GetUserInfoByUsernameForLogin(p.Username)
 	if err == sql.ErrNoRows {
-		return false, ErrorUserNotExist, nil
+		return false, models.ErrorUserNotExist, nil
 	}
 	if err != nil {
 		return false, err, nil
@@ -78,14 +70,14 @@ func LoginCheckPassword(p *models.ParamLoginIn) (bool, error, *models.Userinfopu
 		userinfopublic, err := daomysql.GetUserInfoByUserId(userinfo.User_id)
 		return true, err, userinfopublic
 	}
-	return false, ErrorUserPassowrdWrong, nil
+	return false, models.ErrorUserPassowrdWrong, nil
 }
 
 //生成jwttoken accesstoken
 func GenUserJwtToken(p *models.ParamLoginIn) (string, error) {
 	userinfo, err := daomysql.GetUserInfoByUsernameForJWT(p.Username)
 	if err == sql.ErrNoRows {
-		return "", ErrorUserNotExist
+		return "", models.ErrorUserNotExist
 	}
 	if err != nil {
 		return "", err

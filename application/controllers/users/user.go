@@ -44,7 +44,7 @@ func SignUpHandler(c *gin.Context) {
 
 	//注册逻辑
 	err := logic.SignUp(p)
-	if errors.Is(err, logic.ErrorUserExist) {
+	if errors.Is(err, models.ErrorUserExist) {
 		zap.L().Error("SignUp failed in logic prase -USER EXSIT", zap.Error(err))
 		gin_request_response.Response(c, settings.CodeUserExist, nil)
 		return
@@ -141,13 +141,13 @@ func LoginInHandler(c *gin.Context) {
 	//校验参数
 	result, err, userinfopublic := logic.LoginCheckPassword(p)
 	//用户不存在
-	if errors.Is(err, logic.ErrorUserNotExist) {
+	if errors.Is(err, models.ErrorUserNotExist) {
 		zap.L().Error("login failed in ErrorUserNotExist", zap.Error(err))
 		gin_request_response.Response(c, settings.CodeUserNotExist, nil)
 		return
 	}
 	//用户密码错误
-	if errors.Is(err, logic.ErrorUserPassowrdWrong) {
+	if errors.Is(err, models.ErrorUserPassowrdWrong) {
 		zap.L().Error("login failed in ErrorUserPassowrdWrong", zap.Error(err))
 		gin_request_response.Response(c, settings.CodeCheckPasswordWrong, nil)
 		return

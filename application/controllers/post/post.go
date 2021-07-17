@@ -101,7 +101,7 @@ func PostVoteHandle(c *gin.Context) {
 	}
 
 	result, err := logic.PostVote(p, user_id)
-	if errors.Is(err, logic.ErrorVoteOutOfTime) {
+	if errors.Is(err, models.ErrorVoteOutOfTime) {
 		gin_request_response.Response(c, settings.ErrorVoteOutOfTime, nil)
 		return
 	}

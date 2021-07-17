@@ -40,6 +40,6 @@ type ParamUserPost struct {
 
 //帖子投票参数
 type ParamVotePost struct {
-	PostId    int64 `json:"post_id,string" binding:"required"`                //帖子id
-	Direction int8  `json:"direction,string" binding:"required,oneof=1 0 -1"` //赞成1 反对 -1  取消0
+	PostId    int64 `json:"post_id,string" binding:"required"`                  //帖子id
+	Direction int8  `json:"direction,string" binding:"required,oneof=1 -1 -99"` //赞成1 反对 -1  取消-99 转为0
 }

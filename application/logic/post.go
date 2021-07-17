@@ -3,7 +3,9 @@ package logic
 import (
 	"mygin/application/models"
 	"mygin/dao/daomysql"
+	"mygin/dao/daoredis"
 	"mygin/tools/snowflake"
+	"strconv"
 )
 
 //社区列表
@@ -50,5 +52,9 @@ func PostInfo(p *models.ParamUserPost, user_id int64) (err error) {
 		"community_id": p.Community_id,
 		"status":       1}
 	err = daomysql.InsertPost(postinfo)
+	if err == nil {
+		//将发帖时间存入redis 作为是否可参与投票的判断时间依据
+		daoredis.SavePostTimeAndInitScore(strconv.Itoa(int(post_id)))
+	}
 	return err
 }

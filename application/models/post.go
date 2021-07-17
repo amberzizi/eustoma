@@ -1,7 +1,17 @@
 package models
 
+import (
+	"errors"
+)
+
+//定义自定义error
+var (
+	ErrorVoteOutOfTime = errors.New("超出可投票时间")
+)
+
 //统一使用的常量名称
 const CanVoteLimit = 3600 * 24 * 7 //允许投票的时间长度
+const ScorePerVote = 432           //每一票价值的分数
 //分类模型
 //完整的分类信息
 type Post struct {

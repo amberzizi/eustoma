@@ -1,7 +1,18 @@
 package models
 
+import (
+	"errors"
+)
+
 //统一使用的常量名称
 const ContextUserIdKey = "user_id" //用户登录后上下文携带的user_id
+
+//定义自定义error
+var (
+	ErrorUserExist         = errors.New("用户已存在")
+	ErrorUserNotExist      = errors.New("用户名不存在")
+	ErrorUserPassowrdWrong = errors.New("用户密码错误")
+)
 
 //完整用户信息
 type User struct {
