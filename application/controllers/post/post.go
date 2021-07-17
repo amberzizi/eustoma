@@ -37,6 +37,34 @@ func PostListHandle(c *gin.Context) {
 	gin_request_response.Response(c, settings.CodeSuccess, data)
 }
 
+//topn的根据新和分数排序的帖子列表
+func PostListIndexHandle(c *gin.Context) {
+	typeId := c.Param("typeId")
+	page := c.Param("page")
+	limit := c.Param("limit")
+	ctypeId, err := strconv.Atoi(typeId)
+	climit, err := strconv.Atoi(limit)
+	cpage, err := strconv.Atoi(page)
+
+	if (ctypeId != 1 && ctypeId != 2) || err != nil {
+		gin_request_response.Response(c, settings.CodeInvalidParam, nil)
+		return
+	}
+	if climit > 50 {
+		//每页面显示数量过多
+		gin_request_response.Response(c, settings.CodeOutOfRange, nil)
+		return
+	}
+	data, err := logic.GetPostListIndexByParam(ctypeId, cpage, climit)
+	if err != nil {
+		zap.L().Error("PostListHandle faild", zap.Error(err))
+		gin_request_response.Response(c, settings.CodeServerBusy, nil)
+		return
+	}
+	gin_request_response.Response(c, settings.CodeSuccess, data)
+
+}
+
 //帖子详情
 func PostListDetailHandle(c *gin.Context) {
 	postId := c.Param("postId")

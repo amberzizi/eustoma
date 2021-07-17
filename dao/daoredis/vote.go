@@ -78,3 +78,23 @@ func SavePostTimeAndInitScore(postId string) error {
 
 	return err
 }
+
+//获取符合要求的postid  最新/最高分
+func GetPostListKeyvalueByParam(typeId int, cpage int, limit int) ([]string, []redis.Z, error) {
+	//分页
+	start_v := (cpage - 1) * limit
+	stop_v := start_v + limit - 1
+	//key索引
+	key := getReidsKey(KeyPostTimeZSet) //models.CheckForTime
+	if typeId == models.CheckForScore {
+		key = getReidsKey(KeyPostScoreZSet)
+	}
+	//newest
+	results, err := rdb.ZRevRange(key, int64(start_v), int64(stop_v)).Result()
+	resultswithscore, err := rdb.ZRevRangeWithScores(key, int64(start_v), int64(stop_v)).Result()
+
+	if err != nil {
+		return nil, nil, err
+	}
+	return results, resultswithscore, nil
+}

@@ -57,6 +57,8 @@ func SetupRouter(mode string) *gin.Engine {
 		v1.GET("/community/:communityId", community.GetCommunityInfoById)
 		//帖子
 		v1.GET("/postlist/:communityId/:page/:limit", post.PostListHandle)
+		//最新topn帖子typeid 1 分数最高topn帖子 typeid 2
+		v1.GET("/postlistindex/:typeId/:page/:limit", post.PostListIndexHandle)
 
 		//需要中间件
 		//jwt认证中间件

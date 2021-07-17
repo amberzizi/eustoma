@@ -12,6 +12,8 @@ var (
 //统一使用的常量名称
 const CanVoteLimit = 3600 * 24 * 7 //允许投票的时间长度
 const ScorePerVote = 432           //每一票价值的分数
+const CheckForTime = 1             //按新旧帖子排序
+const CheckForScore = 2            //按照帖子投票分数排序
 //分类模型
 //完整的分类信息
 type Post struct {
@@ -51,4 +53,12 @@ type ApiPostDetail struct {
 	AuthorName       string `json:"author_name"`
 	*CommunityDetail `json:"community"`
 	*PostDetail
+}
+
+//分数
+type ApiPostDetailAndScore struct {
+	Score           int64  `json:"score,string"`
+	AuthorName      string `json:"author_name"`
+	CommunityDetail `json:"community"`
+	PostDetail
 }
