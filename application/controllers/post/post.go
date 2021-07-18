@@ -37,6 +37,36 @@ func PostListHandle(c *gin.Context) {
 	gin_request_response.Response(c, settings.CodeSuccess, data)
 }
 
+//社区内topn的根据新和分数排序的帖子列表
+func PostListCommunityIndexHandle(c *gin.Context) {
+	communityId := c.Param("communityId")
+	typeId := c.Param("typeId")
+	page := c.Param("page")
+	limit := c.Param("limit")
+	communityid, err := strconv.ParseInt(communityId, 10, 64)
+	ctypeId, err := strconv.Atoi(typeId)
+	climit, err := strconv.Atoi(limit)
+	cpage, err := strconv.Atoi(page)
+
+	if (ctypeId != 1 && ctypeId != 2) || err != nil {
+		gin_request_response.Response(c, settings.CodeInvalidParam, nil)
+		return
+	}
+	if climit > 50 {
+		//每页面显示数量过多
+		gin_request_response.Response(c, settings.CodeOutOfRange, nil)
+		return
+	}
+	data, err := logic.GetPostListCommunityIndexByParam(communityid, ctypeId, cpage, climit)
+	if err != nil {
+		zap.L().Error("PostListHandle faild", zap.Error(err))
+		gin_request_response.Response(c, settings.CodeServerBusy, nil)
+		return
+	}
+	gin_request_response.Response(c, settings.CodeSuccess, data)
+
+}
+
 //topn的根据新和分数排序的帖子列表
 func PostListIndexHandle(c *gin.Context) {
 	typeId := c.Param("typeId")
@@ -62,7 +92,6 @@ func PostListIndexHandle(c *gin.Context) {
 		return
 	}
 	gin_request_response.Response(c, settings.CodeSuccess, data)
-
 }
 
 //帖子详情

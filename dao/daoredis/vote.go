@@ -1,9 +1,11 @@
 package daoredis
 
 import (
+	"fmt"
 	"github.com/go-redis/redis"
 	"math"
 	"mygin/application/models"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -84,6 +86,12 @@ func SavePostTimeAndInitScore(postId string) error {
 	return err
 }
 
+//社区内帖子发帖记录社区内帖子idset
+func SaveCommunityPostIdInSet(communityId string, postId string) error {
+	_, err := rdb.SAdd(getReidsKey(KeyCommunitySetPrefix)+communityId, postId).Result()
+	return err
+}
+
 //获取符合要求的postid  最新/最高分
 func GetPostListKeyvalueByParam(typeId int, cpage int, limit int) ([]string, []redis.Z, error) {
 	//分页
@@ -97,6 +105,55 @@ func GetPostListKeyvalueByParam(typeId int, cpage int, limit int) ([]string, []r
 	//newest
 	results, err := rdb.ZRevRange(key, int64(start_v), int64(stop_v)).Result()
 	resultswithscore, err := rdb.ZRevRangeWithScores(key, int64(start_v), int64(stop_v)).Result()
+
+	if err != nil {
+		return nil, nil, err
+	}
+	return results, resultswithscore, nil
+}
+
+//社区内 获取符合要求的postid 最新 最高分
+//rightkey（set）社区key 内涵帖子id
+//leftkey （zset）排序zset 内涵 所有帖子id+时间/分数
+//使用ZInterStore联合r+l，并生成1分钟缓存 减少查询压力
+func GetPostListCommunityKeyvalueByParam(communityid int64, typeId int, cpage int, limit int) ([]string, []redis.Z, error) {
+	//1。分页
+	start_v := (cpage - 1) * limit
+	stop_v := start_v + limit - 1
+	//2。leftkey 排序 时间/分数 zset
+	leftkey := getReidsKey(KeyPostTimeZSet) //models.CheckForTime
+	if typeId == models.CheckForScore {
+		leftkey = getReidsKey(KeyPostScoreZSet)
+	}
+	//3。setkey rightkey 社区内帖子索引
+	rightkey := getReidsKey(KeyCommunitySetPrefix)
+	//社区key
+	communitykey := rightkey + strconv.Itoa(int(communityid))
+
+	//4。使用zinterstore 把分区的帖子（rightkey）set和帖子分数的（leftkey）zset 生成一个新的zset
+	//针对新的zset按之前的逻辑取数据
+	//利用缓存key减少zinterstore执行的次数  也就是排序key+communityid
+	//临时创建的缓存key
+	quickStoreKey := leftkey + strconv.Itoa(int(communityid))
+	//判断是否存在  生成缓存
+	//rdb.ZInterStore(缓存key,redis.ZStore{},社区key（rightkey）,排序key（leftkey）)
+	fmt.Println(rdb.Exists(quickStoreKey).Val())
+	if rdb.Exists(quickStoreKey).Val() < 1 {
+		pipeline := rdb.Pipeline()
+		pipeline.ZInterStore(quickStoreKey, redis.ZStore{
+			Aggregate: "MAX",
+		}, communitykey, leftkey)
+		//设置缓存过期时间
+		pipeline.Expire(quickStoreKey, 60*time.Second)
+		_, err := pipeline.Exec()
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	//newest
+	results, err := rdb.ZRevRange(quickStoreKey, int64(start_v), int64(stop_v)).Result()
+	resultswithscore, err := rdb.ZRevRangeWithScores(quickStoreKey, int64(start_v), int64(stop_v)).Result()
 
 	if err != nil {
 		return nil, nil, err

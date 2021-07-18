@@ -7,6 +7,7 @@ const (
 	KeyPostTimeZSet        = "post:time"   //zset; 以发帖时间为分数  {value:postId,score:发帖时间}
 	KeyPostScoreZSet       = "post:score"  //zset；以投票为分数  {value:postId,score:8000当前分数}
 	KeyPostVotedZSetPrefix = "post:voted:" //zset;前缀   参数是帖子post_id  {value:userId,score:1 0 -1}
+	KeyCommunitySetPrefix  = "community:"  //set； 社区id 内帖子postidset
 )
 
 //获取带前缀的rediskey
