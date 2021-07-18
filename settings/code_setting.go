@@ -25,6 +25,7 @@ const (
 	CodePostError                                        //发布失败
 	CodeVoteError                                        //投票失败
 	ErrorVoteOutOfTime                                   //超出投票时间
+	ErrorVoteRepeat                                      //重复投票
 )
 
 var CodeSetting = [...]string{
@@ -51,4 +52,5 @@ var CodeSetting = [...]string{
 	1020: "发布失败",
 	1021: "投票失败",
 	1022: "超出投票时间",
+	1023: "请勿重复投票",
 }

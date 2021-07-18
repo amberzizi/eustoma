@@ -4,6 +4,7 @@ import (
 	"github.com/go-redis/redis"
 	"math"
 	"mygin/application/models"
+	"strings"
 	"time"
 )
 
@@ -29,6 +30,10 @@ func SaveVoteForPost(userId, postId string, value float64) (bool, error) {
 	//2.更新帖子分数
 	//查询之前的投票记录
 	ov := rdb.ZScore(getReidsKey(KeyPostVotedZSetPrefix+postId), userId).Val()
+	//检查 用户重复投票，如果用户传递的投票值和之前相同，拒绝后续操作
+	if value == ov {
+		return false, models.ErrorVoteRepeat
+	}
 
 	var op float64 //方向
 	if value > ov {
@@ -97,4 +102,41 @@ func GetPostListKeyvalueByParam(typeId int, cpage int, limit int) ([]string, []r
 		return nil, nil, err
 	}
 	return results, resultswithscore, nil
+}
+
+//获取指定帖子列表用户投的票数  赞成票 1
+func GetPostListVoteNumByPostList(datas []string) (map[string]int64, error) {
+	//returndata := make(map[string]int64)
+	//for _, value := range datas {
+	//	v := rdb.ZCount(getReidsKey(KeyPostVotedZSetPrefix+value), "1", "1").Val()
+	//	returndata[value] = v
+	//}
+
+	//keys := make([]string, len(datas))
+	//...
+	//keys = append(keys, key)
+
+	//使用pipeline 减少RTT连接时间
+	pipeline := rdb.Pipeline()
+	for _, id := range datas {
+		key := getReidsKey(KeyPostVotedZSetPrefix + id)
+		pipeline.ZCount(key, "1", "1")
+
+	}
+	cmders, err := pipeline.Exec()
+	if err != nil {
+		return nil, err
+	}
+
+	//创建返回map
+	//根据pipeline合并执行的返回值 拼接返回map
+	returndata := make(map[string]int64)
+	for _, cmder := range cmders {
+		postidstr := cmder.Args()[1].(string)
+		desStr := strings.Split(postidstr, ":")
+		v := cmder.(*redis.IntCmd).Val()
+		returndata[desStr[3]] = v
+	}
+	return returndata, err
+
 }

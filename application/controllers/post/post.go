@@ -133,6 +133,10 @@ func PostVoteHandle(c *gin.Context) {
 		gin_request_response.Response(c, settings.ErrorVoteOutOfTime, nil)
 		return
 	}
+	if errors.Is(err, models.ErrorVoteRepeat) {
+		gin_request_response.Response(c, settings.ErrorVoteRepeat, nil)
+		return
+	}
 	if err != nil || !result {
 		gin_request_response.Response(c, settings.CodeVoteError, nil)
 	}

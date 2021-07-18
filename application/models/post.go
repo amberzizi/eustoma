@@ -7,6 +7,7 @@ import (
 //定义自定义error
 var (
 	ErrorVoteOutOfTime = errors.New("超出可投票时间")
+	ErrorVoteRepeat    = errors.New("请勿重复投票")
 )
 
 //统一使用的常量名称
@@ -58,6 +59,7 @@ type ApiPostDetail struct {
 //分数
 type ApiPostDetailAndScore struct {
 	Score           int64  `json:"score,string"`
+	VoteNum         int64  `json:"votenum,string"`
 	AuthorName      string `json:"author_name"`
 	CommunityDetail `json:"community"`
 	PostDetail

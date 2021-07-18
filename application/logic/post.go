@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"fmt"
 	"mygin/application/models"
 	"mygin/dao/daomysql"
 	"mygin/dao/daoredis"
@@ -19,32 +18,44 @@ func GetPostListByCid(cid int64, page int, limit int) ([]models.PostDetail, erro
 func GetPostListIndexByParam(typeId int, cpage int, limit int) ([]models.ApiPostDetailAndScore, error) {
 	//获取排序后的最新 或最高分postid数组
 	datas, dataswitchscore, err := daoredis.GetPostListKeyvalueByParam(typeId, cpage, limit)
+	//如果无相关帖子可显示 则不继续下面的查询
 	if len(datas) == 0 {
 		return nil, err
 	}
+	//获取本次帖子相关的redis正数
+	dataforvotesum, err := daoredis.GetPostListVoteNumByPostList(datas)
+	//fmt.Println(dataforvotesum)
 	//到mysql中获取帖子详情
 	datasdetaillist, err := daomysql.GetPostListPostIdList(datas)
-	//初始化数组
+	//初始化结构体数组
 	var returninfo = make([]models.ApiPostDetailAndScore, len(dataswitchscore))
 
 	//排序输出
 	for key, valueZ := range dataswitchscore {
-		fmt.Println(valueZ)
 		for _, value := range datasdetaillist {
 			if valueZ.Member.(string) == strconv.FormatInt(value.Post_id, 10) {
-
+				//获取当前帖子的社区信息
 				datacommunity, err := daomysql.GetCommunityByCid(value.Community_id)
 				if err != nil {
 					return nil, err
 				}
+				//获取当前帖子的用户信息
 				datauser, err := daomysql.GetUserInfoByUserId(value.Author_id)
 				if err != nil {
 					return nil, err
 				}
+				//为当前帖子的正数票数赋值
+				var votenumtemp int64
+				for votsumpostid, votsumvalue := range dataforvotesum {
+					if votsumpostid == valueZ.Member.(string) {
+						votenumtemp = votsumvalue
+					}
+				}
 
 				returninfo[key] = models.ApiPostDetailAndScore{
 					AuthorName:      datauser.Username,
-					Score:           int64(valueZ.Score),
+					VoteNum:         votenumtemp,         //帖子投票为正数赞成票的计数
+					Score:           int64(valueZ.Score), //时间为检索的时候为时间戳，分数检索的时候代表分数
 					PostDetail:      value,
 					CommunityDetail: *datacommunity,
 				}
