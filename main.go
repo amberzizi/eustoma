@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/shirou/gopsutil/mem"
 	"go.uber.org/zap"
 	"mygin/dao/daomysql"
 	"mygin/dao/daoredis"
@@ -54,6 +55,13 @@ func main() {
 	defer daomysql.Gclose()
 	//6.载入路由
 	r := routers.SetupRouter(settings.SettingGlb.App.Mode)
+
+	//test
+	v, _ := mem.VirtualMemory()
+	// almost every return value is a struct
+	fmt.Printf("Total: %v, Free:%v, UsedPercent:%f%%\n", v.Total, v.Free, v.UsedPercent)
+	// convert to JSON. String() is also implemented
+	fmt.Println(v)
 
 	//7.协程开机监听端口
 	//优雅重启  和 supervisor不可兼得 supervisor会自动拉起监控中的关机进程

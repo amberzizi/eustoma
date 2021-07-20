@@ -21,6 +21,7 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect  	===日志文件切割===
 	github.com/onsi/ginkgo v1.16.4 // indirect
 	github.com/onsi/gomega v1.13.0 // indirect
+	github.com/shirou/gopsutil v3.21.6+incompatible // indirect
 	github.com/spf13/viper v1.8.1 //                                    ===成熟的多类型，支持远程配置中心载入配置库===
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/swaggo/gin-swagger v1.3.0 // indirect
