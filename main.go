@@ -66,7 +66,7 @@ func main() {
 			zap.L().Debug(fmt.Sprint("server listen on..."+settings.SettingGlb.App.Runport, err))
 		}
 	}()
-	zap.L().Debug(fmt.Sprint("upppppp...", settings.SettingGlb.App.Runport))
+	zap.L().Debug(fmt.Sprint("upppppp...linux", settings.SettingGlb.App.Runport))
 
 	//8.平滑优雅关机
 	quit := make(chan os.Signal, 1) //创建一个接收信号的通道
