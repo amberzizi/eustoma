@@ -57,8 +57,10 @@ type Log struct {
 func InitSettingViaViper() {
 	//载入配置文件
 	viper.AddConfigPath("./conf/")
-	viper.SetConfigName("systeminfo.ini")
-	viper.SetConfigType("ini")
+	//viper.SetConfigName("systeminfo.ini")
+	//viper.SetConfigType("ini")
+	viper.SetConfigName("systeminfo.json")
+	viper.SetConfigType("json")
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println("Failed to read config file: %s", err)
