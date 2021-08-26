@@ -17,7 +17,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/mozillazg/go-pinyin"
 	"go.uber.org/zap"
 	"mygin/dao/daomysql"
 	"mygin/dao/daoredis"
@@ -55,12 +54,6 @@ func main() {
 	defer daomysql.Gclose()
 	//6.载入路由
 	r := routers.SetupRouter(settings.SettingGlb.App.Mode)
-
-	//test
-	hans := "中国人"
-	// 默认
-	a := pinyin.NewArgs()
-	fmt.Println(pinyin.Pinyin(hans, a))
 
 	//7.协程开机监听端口
 	//优雅重启  和 supervisor不可兼得 supervisor会自动拉起监控中的关机进程

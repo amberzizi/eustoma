@@ -8,8 +8,8 @@ import (
 	"mygin/application/controllers/community"
 	"mygin/application/controllers/post"
 	user "mygin/application/controllers/users"
+	supiuser "mygin/application/supiapp/controllers/users"
 	_ "mygin/docs"
-
 	"mygin/middlewares"
 	"net"
 	"net/http"
@@ -41,7 +41,6 @@ func SetupRouter(mode string) *gin.Engine {
 	r.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	v1 := r.Group("/api/v1")
 	{
-
 		//无须中间件
 		//注册
 		v1.POST("/signup", user.SignUpHandler) //用户注册
@@ -76,6 +75,12 @@ func SetupRouter(mode string) *gin.Engine {
 			v1.POST("/vote", post.PostVoteHandle)
 
 		}
+	}
+
+	//supi
+	supiv1 := r.Group("/api/supiv1")
+	{
+		supiv1.GET("/test", supiuser.Test)
 	}
 
 	r.NoRoute(func(c *gin.Context) {
