@@ -80,7 +80,8 @@ func SetupRouter(mode string) *gin.Engine {
 	//supi
 	supiv1 := r.Group("/api/supiv1")
 	{
-		supiv1.GET("/test", supiuser.Test)
+		//小程序用户注册
+		supiv1.POST("/user_center/miniapp_telphone_login", supiuser.User_signup_by_miniapp)
 	}
 
 	r.NoRoute(func(c *gin.Context) {
